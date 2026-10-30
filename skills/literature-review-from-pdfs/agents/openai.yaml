@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature review from original PDFs"
+  short_description: "Follow the original guidance in two supplied PDFs"
+  default_prompt: "Use $literature-review-from-pdfs to write or revise this literature review following the original instructions in the two source PDFs."

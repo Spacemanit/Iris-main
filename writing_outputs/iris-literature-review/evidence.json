@@ -1,0 +1,578 @@
+[
+  {
+    "key": "admoni2017",
+    "title": "Social Eye Gaze in Human-Robot Interaction: A Review",
+    "authors": [
+      "Henny Admoni",
+      "Brian Scassellati"
+    ],
+    "year": 2017,
+    "url": "https://www.ri.cmu.edu/app/uploads/2018/01/admoni2017jhri.pdf",
+    "doi": "10.5898/JHRI.6.1.Admoni",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Terminology",
+      "Social gaze"
+    ],
+    "method_context": "Narrative review separating human-, design- and technology-focused gaze investigations.",
+    "findings": [
+      {
+        "claim": "Implementing gaze and measuring its human effects are distinct research goals.",
+        "locator": "Section 1, journal pp. 25-27"
+      },
+      {
+        "claim": "Face-directed behavior without reciprocity is not mutual gaze; joint attention concerns a shared referent.",
+        "locator": "Section 1, pp. 26-27"
+      }
+    ],
+    "limitations": [
+      "A broad historical review does not validate a particular small display or implementation."
+    ],
+    "notes": "Full-text passages and publication details inspected online on 13 October 2026. Also used as the pre-2019 domain-specific style exemplar."
+  },
+  {
+    "key": "neuber2026",
+    "title": "Eyes ahead: a scoping review of technologies enabling humanoid robots to follow human gaze",
+    "authors": [
+      "Leana Neuber",
+      "Wolf Culemann",
+      "Ruth Maria Ingendoh",
+      "Angela Heine"
+    ],
+    "year": 2026,
+    "url": "https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2025.1723527/full",
+    "doi": "10.3389/frobt.2025.1723527",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Terminology",
+      "Temporal reporting"
+    ],
+    "method_context": "Scoping review of humanoid systems estimating human gaze and mapping it to environmental targets.",
+    "findings": [
+      {
+        "claim": "Gaze following requires gaze estimation and environmental mapping rather than face-position tracking alone.",
+        "locator": "Sections 3 and 4"
+      },
+      {
+        "claim": "Most reviewed studies omit response-time information such as detection-to-reaction latency.",
+        "locator": "Section 4.2, third future-research point"
+      }
+    ],
+    "limitations": [
+      "Its gaze-following scope is adjacent to face-following companions, not identical.",
+      "Abstract and discussion report inconsistent study totals; the manuscript does not reproduce either total."
+    ],
+    "notes": "Publisher full text and citation checked 13 October 2026. Published 16 January 2026; volume 12 is labeled 2025."
+  },
+  {
+    "key": "rutatola2026",
+    "title": "Low-cost social robot designs for education: a review",
+    "authors": [
+      "Edger P. Rutatola",
+      "Frank C. Msonge",
+      "Remko Proesmans",
+      "Koen Stroeken",
+      "Tony Belpaeme"
+    ],
+    "year": 2026,
+    "url": "https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2026.1827676/full",
+    "doi": "10.3389/frobt.2026.1827676",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Affordability",
+      "Compute placement"
+    ],
+    "method_context": "Review of 34 affordable educational robot designs.",
+    "findings": [
+      {
+        "claim": "Designs use varied display and computing arrangements, including combined microcontroller and higher-level computing architectures.",
+        "locator": "Sections 5.2 and 5.3"
+      },
+      {
+        "claim": "Affordability depends on application resources and continuing infrastructure costs.",
+        "locator": "Section 5.3"
+      }
+    ],
+    "limitations": [
+      "Educational robot designs do not supply a universal cost threshold for miniature companions.",
+      "Grey literature is outside the review search."
+    ],
+    "notes": "Publisher methods, discussion and bibliographic identity checked 13 October 2026."
+  },
+  {
+    "key": "wang2026",
+    "title": "How Do We Research Human-Robot Interaction in the Age of Large Language Models? A Systematic Review",
+    "authors": [
+      "Yufeng Wang",
+      "Yuan Xu",
+      "Anastasia Nikolova",
+      "Yuxuan Wang",
+      "Jianyu Wang",
+      "Chongyang Wang",
+      "Xin Tong"
+    ],
+    "year": 2026,
+    "url": "https://arxiv.org/abs/2602.15063v1",
+    "doi": "10.48550/arXiv.2602.15063",
+    "source_path": "",
+    "publication_status": "preprint",
+    "metadata_verified": true,
+    "access": "abstract",
+    "themes": [
+      "Scope",
+      "Evaluation heterogeneity"
+    ],
+    "method_context": "Author-preprint abstract of a systematic review reporting 86 included articles.",
+    "findings": [
+      {
+        "claim": "LLM-HRI studies use varied experimental setups, methods and evaluation measures.",
+        "locator": "Abstract"
+      }
+    ],
+    "limitations": [
+      "Only abstract-level claims are used; no individual-study or methods detail is inferred."
+    ],
+    "notes": "ArXiv metadata and abstract checked 13 October 2026. Associated CHI publication DOI 10.1145/3772318.3790920 is linked by arXiv; author version is cited explicitly."
+  },
+  {
+    "key": "sanra2019",
+    "title": "SANRA—a scale for the quality assessment of narrative review articles",
+    "authors": [
+      "Christopher Baethge",
+      "Sandra Goldbeck-Wood",
+      "Stephan Mertens"
+    ],
+    "year": 2019,
+    "url": "https://link.springer.com/article/10.1186/s41073-019-0064-8",
+    "doi": "10.1186/s41073-019-0064-8",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Review method"
+    ],
+    "method_context": "Editorial appraisal scale developed and tested on medical narrative-review manuscripts.",
+    "findings": [
+      {
+        "claim": "The six items address importance, aims, search description, references, reasoning and endpoint information.",
+        "locator": "Abstract and Methods"
+      }
+    ],
+    "limitations": [
+      "Medical-domain development does not establish validation as a robotics review standard."
+    ],
+    "notes": "Original article inspected online 13 October 2026; used as an editorial checklist, with no numerical score assigned."
+  },
+  {
+    "key": "hessels2026",
+    "title": "A visual perceptual perspective on gaze in social robotics",
+    "authors": [
+      "Roy S. Hessels",
+      "Yu Fang"
+    ],
+    "year": 2026,
+    "url": "https://link.springer.com/article/10.3758/s13423-026-02902-x",
+    "doi": "10.3758/s13423-026-02902-x",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Attention",
+      "Transfer limits"
+    ],
+    "method_context": "Theoretical perspective on perceptual and communicative gaze functions.",
+    "findings": [
+      {
+        "claim": "Looking direction should not be equated with visual attention, and perceptual and individual differences matter.",
+        "locator": "Opening paragraphs and core challenges"
+      },
+      {
+        "claim": "The article focuses on humanoid and anthropomorphic robots and limits generalization to other forms.",
+        "locator": "Opening scope paragraph"
+      }
+    ],
+    "limitations": [
+      "Not a new observer experiment validating stylized screen eyes."
+    ],
+    "notes": "Publisher text and citation verified 13 October 2026; volume 33, article 131."
+  },
+  {
+    "key": "almoubayed2012",
+    "title": "Taming Mona Lisa: Communicating Gaze Faithfully in 2D and 3D Facial Projections",
+    "authors": [
+      "Samer Al Moubayed",
+      "Jens Edlund",
+      "Jonas Beskow"
+    ],
+    "year": 2012,
+    "url": "https://www.lri.fr/~anab/teaching/evaluation/papers/AlMoubayed2012_MonaLisaEffect.pdf",
+    "doi": "10.1145/2070719.2070724",
+    "source_path": "../../tmp/pdfs/review_sources/almoubayed2012.pdf",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Representation",
+      "Spatial gaze"
+    ],
+    "method_context": "Within-subject flat-versus-3D projection comparison with five observers at five positions, 1.8 m from the face.",
+    "findings": [
+      {
+        "claim": "The three-dimensional projection supported viewpoint-independent interpretation of gaze in physical space relative to the tested flat projection.",
+        "locator": "Sections 3.2, 3.4 and 5; journal pp. 11:10-11:18 and 11:22-11:23"
+      }
+    ],
+    "limitations": [
+      "Five observers and a particular projection geometry.",
+      "An omitted stimulus-angle range due to a programming error is acknowledged in Section 3.2."
+    ],
+    "notes": "Existing full PDF and extraction inspected 13 October 2026; title page gives January 2012, volume 1, issue 2, article 11."
+  },
+  {
+    "key": "jung2023",
+    "title": "Breaking the Mona Lisa Effect: Enhancing Eye Contact with Virtual Humans in 2D Display Environments",
+    "authors": [
+      "Sunghun Jung",
+      "Junyeong Kum",
+      "Myungho Lee"
+    ],
+    "year": 2023,
+    "url": "https://ceur-ws.org/Vol-3467/paper4.pdf",
+    "doi": "",
+    "source_path": "../../tmp/pdfs/review_sources/jung2023.pdf",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Representation",
+      "Viewpoint cues"
+    ],
+    "method_context": "Within-subject gaze judgments by 30 university participants; 65-inch display, 2.4 m distance; 5-degree and 15-degree arrangements.",
+    "findings": [
+      {
+        "claim": "Small virtual-camera rotation improved left/right gaze recognition in the narrow 5-degree arrangement.",
+        "locator": "Sections 3, 4.2-4.3 and 5, PDF pp. 2-4"
+      }
+    ],
+    "limitations": [
+      "Only a constrained two-observer arrangement.",
+      "Gaze judgment without conversation; dialogue transfer remains future work.",
+      "The 15-degree condition always preceded the 5-degree condition."
+    ],
+    "notes": "Full supplied/cached proceedings PDF read 13 October 2026. CEUR Workshop Proceedings 3467, APMAR 2023; no DOI invented."
+  },
+  {
+    "key": "mirror2025",
+    "title": "Mirror Eyes: Explainable Human-Robot Interaction at a Glance",
+    "authors": [
+      "Matti Krüger",
+      "Daniel Tanneberg",
+      "Chao Wang",
+      "Stephan Hasler",
+      "Michael Gienger"
+    ],
+    "year": 2025,
+    "url": "https://arxiv.org/html/2506.18466v1",
+    "doi": "10.48550/arXiv.2506.18466",
+    "source_path": "",
+    "publication_status": "preprint",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Referential cues",
+      "Awareness"
+    ],
+    "method_context": "Within-subject robot pick-and-place task with 33 participants, screen eyes, an actuated head, speech and programmed errors.",
+    "findings": [
+      {
+        "claim": "Mirrored target imagery increased subjective information-processing awareness and enabled earlier interruption of erroneous actions.",
+        "locator": "Sections II-D, III-A and III-B; Table II"
+      }
+    ],
+    "limitations": [
+      "Very brief exposure, primarily engineering/science participants.",
+      "No miniature-display legibility or cost evaluation."
+    ],
+    "notes": "ArXiv v1 HTML and identity inspected 13 October 2026. Associated RO-MAN publication DOI 10.1109/RO-MAN63969.2025.11217810 is linked by arXiv; inspected author version is labeled."
+  },
+  {
+    "key": "andrist2014",
+    "title": "Conversational Gaze Aversion for Humanlike Robots",
+    "authors": [
+      "Sean Andrist",
+      "Xiang Zhi Tan",
+      "Michael Gleicher",
+      "Bilge Mutlu"
+    ],
+    "year": 2014,
+    "url": "https://pages.cs.wisc.edu/~bilge/pubs/2014/HRI14-Andrist.pdf",
+    "doi": "10.1145/2559636.2559666",
+    "source_path": "../../tmp/pdfs/review_sources/andrist2014.pdf",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Conversational gaze",
+      "Null findings"
+    ],
+    "method_context": "Thirty-participant NAO study comparing well-timed, poorly timed and absent aversion, across conversation tasks.",
+    "findings": [
+      {
+        "claim": "Well-timed aversion improved thoughtfulness judgments and conversational floor management.",
+        "locator": "Section 5 Results and Discussion, PDF pp. 6-7"
+      },
+      {
+        "claim": "Well-timed aversion did not increase self-disclosure measured by response word count.",
+        "locator": "Section 5, Hypothesis 2b, PDF p. 6"
+      }
+    ],
+    "limitations": [
+      "Head-mediated gaze differs from pixel-only pupils.",
+      "Scripted task-specific timing is not a general engagement result."
+    ],
+    "notes": "Original cached paper methods/results/limitations and metadata inspected 13 October 2026."
+  },
+  {
+    "key": "axelsson2022",
+    "title": "Modeling Feedback in Interaction With Conversational Agents—A Review",
+    "authors": [
+      "Agnes Axelsson",
+      "Hendrik Buschmeier",
+      "Gabriel Skantze"
+    ],
+    "year": 2022,
+    "url": "https://www.frontiersin.org/journals/computer-science/articles/10.3389/fcomp.2022.744574/full",
+    "doi": "10.3389/fcomp.2022.744574",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Feedback meaning",
+      "Grounding"
+    ],
+    "method_context": "Review of agent-to-user and user-to-agent feedback across speech, facial cues, gaze and head gestures.",
+    "findings": [
+      {
+        "claim": "Feedback distinguishes contact, perception, understanding and attitude/acceptance.",
+        "locator": "Section 2 and Table 1"
+      }
+    ],
+    "limitations": [
+      "Feedback categories do not establish that a particular animation is understood by users."
+    ],
+    "notes": "Publisher text, Table 1 and identity checked 13 October 2026."
+  },
+  {
+    "key": "shiwa2009",
+    "title": "How Quickly Should a Communication Robot Respond? Delaying Strategies and Habituation Effects",
+    "authors": [
+      "Toshiyuki Shiwa",
+      "Takayuki Kanda",
+      "Michita Imai",
+      "Hiroshi Ishiguro",
+      "Norihiro Hagita"
+    ],
+    "year": 2009,
+    "url": "https://link.springer.com/article/10.1007/s12369-009-0012-8",
+    "doi": "10.1007/s12369-009-0012-8",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "abstract",
+    "themes": [
+      "Response timing"
+    ],
+    "method_context": "Publisher abstract describes robot response-time preference, filler strategy and habituation investigations.",
+    "findings": [
+      {
+        "claim": "Response-time preferences peaked at one second in the first experiment; conversational fillers notified listeners of intent to respond.",
+        "locator": "Publisher abstract"
+      }
+    ],
+    "limitations": [
+      "Full-text methods and sample unavailable in this task; no sample or effect size claimed.",
+      "Speech response timing does not establish a universal gaze-motion threshold."
+    ],
+    "notes": "Publisher abstract and metadata verified 13 October 2026."
+  },
+  {
+    "key": "kang2026",
+    "title": "Fluid-Xpress: Emotion-Aware Dual-Loop Framework for Empathic Facial Reaction in HRI",
+    "authors": [
+      "Chen Kang",
+      "Madina Alitai",
+      "Yiting Wang",
+      "Xiaochi Cai",
+      "Ruidong Ma",
+      "Angelo Cangelosi",
+      "Zhegong Shangguan"
+    ],
+    "year": 2026,
+    "url": "https://shura.shu.ac.uk/37180/1/Ma-Fluid-XpressEmotion-Aware%28VoR%29.pdf",
+    "doi": "10.1145/3776734.3794429",
+    "source_path": "../../tmp/pdfs/review_sources/kang2026.pdf",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Concurrent feedback",
+      "Pilot evidence"
+    ],
+    "method_context": "Separate nonverbal and verbal processing loops; within-subject pilot with eight female university students and counterbalanced conditions.",
+    "findings": [
+      {
+        "claim": "The architecture separates nonverbal facial reactions from verbal reasoning.",
+        "locator": "Section 3, Macro-Micro architecture, journal p. 426"
+      },
+      {
+        "claim": "Expression-awareness ratings improved, while between-condition valence change did not differ significantly.",
+        "locator": "Sections 4 and 5, Table 1 and Figure 3; journal pp. 427-428"
+      }
+    ],
+    "limitations": [
+      "Small, homogeneous pilot and brief sessions.",
+      "The isolated 0.05-ms anecdotal latency in the source is not a defined camera-to-pixel benchmark and is omitted."
+    ],
+    "notes": "Original cached published PDF inspected 13 October 2026; cited page range 425-429 excludes repository front matter."
+  },
+  {
+    "key": "yates2021",
+    "title": "Age of Information: An Introduction and Survey",
+    "authors": [
+      "Roy D. Yates",
+      "Yin Sun",
+      "D. Richard Brown III",
+      "Sanjit K. Kaul",
+      "Eytan Modiano",
+      "Sennur Ulukus"
+    ],
+    "year": 2021,
+    "url": "https://user.eng.umd.edu/~ulukus/papers/journal/aoi-survey.pdf",
+    "doi": "10.1109/JSAC.2021.3065072",
+    "source_path": "../../tmp/pdfs/review_sources/yates2021.pdf",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Information freshness",
+      "Queueing"
+    ],
+    "method_context": "Survey of timestamped status updates and information-age models.",
+    "findings": [
+      {
+        "claim": "Age of Information measures elapsed time since generation of the freshest delivered update and differs from delay and throughput.",
+        "locator": "Section II-A, journal pp. 1184-1185"
+      },
+      {
+        "claim": "Sampling and queueing policy affect age; minimum delay does not guarantee minimum age.",
+        "locator": "Sections III-B, IV and V"
+      }
+    ],
+    "limitations": [
+      "Networking analysis is not a validated measure of social presence.",
+      "Its transfer to renderer-target age is proposed interpretation."
+    ],
+    "notes": "Original cached author-hosted published PDF definition and queueing sections inspected 13 October 2026."
+  },
+  {
+    "key": "sun2017",
+    "title": "Update or Wait: How to Keep Your Data Fresh",
+    "authors": [
+      "Yin Sun",
+      "Elif Uysal-Biyikoglu",
+      "Roy D. Yates",
+      "C. Emre Koksal",
+      "Ness B. Shroff"
+    ],
+    "year": 2017,
+    "url": "https://arxiv.org/html/1601.02284v9",
+    "doi": "10.1109/TIT.2017.2735804",
+    "source_path": "",
+    "publication_status": "published",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Pacing",
+      "Information freshness"
+    ],
+    "method_context": "Generate-at-will status-update model with channel feedback and random service times; theoretical optimization.",
+    "findings": [
+      {
+        "claim": "Immediately generating the next update after delivery does not always minimize average information age.",
+        "locator": "Abstract, Section I and Section V"
+      }
+    ],
+    "limitations": [
+      "Assumptions of its channel model are not established for Iris's camera, speech workload and TCP path."
+    ],
+    "notes": "ArXiv v9 full text inspected; published metadata independently verified against the Rutgers institutional record on 13 October 2026. IEEE Transactions on Information Theory 63(11), 7492-7508."
+  },
+  {
+    "key": "roboeyes",
+    "title": "FluxGarage RoboEyes",
+    "authors": [
+      "FluxGarage"
+    ],
+    "year": 2026,
+    "url": "https://github.com/FluxGarage/RoboEyes",
+    "doi": "",
+    "source_path": "",
+    "publication_status": "unknown",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Practical prior art"
+    ],
+    "method_context": "Maintainer README of an Arduino library for animated OLED eyes.",
+    "findings": [
+      {
+        "claim": "The repository documents animated eye rendering on OLED displays.",
+        "locator": "README introduction"
+      }
+    ],
+    "limitations": [
+      "Software repository, not peer-reviewed social-effectiveness evidence."
+    ],
+    "notes": "Inspected 13 October 2026; year represents access year, not a claimed release year. Repository is excluded from the scholarly-study count."
+  },
+  {
+    "key": "xiaozhi",
+    "title": "XiaoZhi ESP32",
+    "authors": [
+      "XiaoZhi ESP32 contributors"
+    ],
+    "year": 2026,
+    "url": "https://github.com/78/xiaozhi-esp32",
+    "doi": "",
+    "source_path": "",
+    "publication_status": "unknown",
+    "metadata_verified": true,
+    "access": "full-text",
+    "themes": [
+      "Practical prior art"
+    ],
+    "method_context": "Maintainer README of an ESP32 conversational-device project.",
+    "findings": [
+      {
+        "claim": "The repository documents conversational audio pipelines and display-capable embedded devices.",
+        "locator": "README Features Implemented and supported hardware"
+      }
+    ],
+    "limitations": [
+      "Software repository; its feature list is not an empirical human-interaction outcome."
+    ],
+    "notes": "Inspected 13 October 2026; access year only. Excluded from the scholarly-study count."
+  }
+]

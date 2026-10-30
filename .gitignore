@@ -1,0 +1,8 @@
+.venv/
+.pio/
+.pio-core/
+__pycache__/
+*.egg-info/
+firmware/include/secrets.h
+arduino/Iris/secrets.h
+.pytest_cache/

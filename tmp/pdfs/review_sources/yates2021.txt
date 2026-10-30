@@ -1,0 +1,3674 @@
+--- PDF page 1 ---
+IEEE JOURNAL ON SELECTED AREAS IN COMM UNICA TIONS, VOL. 39, NO. 5, MA Y 2021 1183
+Age of Information: An Introduction and Survey
+Roy D. Y ates , Fellow, IEEE, Yin Sun, Senior Member , IEEE, D. Richard Brown, III, Sanjit K. Kaul ,
+Eytan Modiano, Fellow, IEEE, and Sennur Ulukus , Fellow, IEEE
+Abstract— We summarize recent contributions in the broad
+area of age of information (AoI). In particular, we describe
+the current state of the art in the design and optimization
+of low-latency cyberphysical systems and applications in which
+sources send time-stamped status updates to interested recipients.
+These applications desire status updates at the recipients to be
+as timely as possible; however , this is typically constrained by
+limited system resources. We describe AoI timeliness metrics
+and present general methods of AoI evaluation analysis that are
+applicable to a wide variety of sources and systems. Starting from
+elementary single-server queues, we apply these AoI methods
+to a range of increasingly complex systems, including energy
+harvesting sensors transmitting over noisy channels, parallel
+server systems, queueing networks, and various single-hop and
+multi-hop wireless networks. We also explore how update age is
+related to MMSE methods of sampling, estimation and control
+of stochastic processes. The paper concludes with a review of
+efforts to employ age optimization in cyberphysical applications.
+Index Terms — Age of information (AoI), queueing systems,
+communication networks, timely source coding, information
+freshness, selective encoding, wireless communication, time mea-
+surement, packet delay, age-delay tradeoff, age-energy tradeoff,
+non-linear age penalty, information update system.
+I. I NTRODUCTION
+L
+OW-LA TENCY cyberphysical system applications con-
+tinue to grow in importance. Camera images from vehi-
+cles are used to generate point clouds that describe the
+Manuscript received July 1, 2020; revised December 15, 2020; accepted
+February 13, 2021. Date of publication M arch 17, 2021; date of current version
+April 16, 2021. The work of Roy D. Y ates was supported by NSF under
+Grant CNS-1717041. The work of Yin Sun was supported by NSF under
+Grant CCF-1813050. The work of D. Richard Brown, III, was supported by
+CNS under Grant 1836690. The work of Eytan Modiano was supported in
+part by NSF under Grant CNS-1713725 and in part by the Army Research
+Ofﬁce (ARO) under Grant W911NF- 17-1-0508. The work of Sennur Ulukus
+was supported by NSF under Grant CCF-1713977 and Grant ECCS-1807348.
+(Corresponding author: Roy D. Yates.)
+Roy D. Y ates is with the Wireless Information Network Laboratory,
+Rutgers University, New Brunswick, NJ 08854 USA, and also with the
+Electrical and Computer Engineering (EC E) Department, Rutgers University,
+New Brunswick, NJ 08854 USA (e-mail: ryates@winlab.rutgers.edu).
+Yin Sun is with the Department of Electrical and Computer Engineering,
+Auburn University, Auburn, AL 36849 USA (e-mail: yinsun@auburn.edu).
+D. Richard Brown, III, is with the Department of Electrical and Computer
+Engineering, Worcester Polytec hnic Institute, Worcester, MA 01609 USA
+(e-mail: drb@wpi.edu).
+Sanjit K. Kaul is with Wireless Syst ems Lab, IIIT-Delhi, New Delhi 110020,
+India (e-mail: skkaul@iiitd.ac.in).
+Eytan Modiano is with the Laboratory for Information and Decision
+Systems (LIDS), Massachusetts Ins titute of Technology (MIT), Cambridge,
+MA 02139 USA (e-mail: modiano@mit.edu).
+Sennur Ulukus is with the Department of Electrical and Computer Engi-
+neering, University of Maryland, College Park, MD 20742 USA (e-mail:
+ulukus@umd.edu).
+Color versions of one or more ﬁgures in this article are available at
+https://doi.org/10.1109/JSAC.2021.3065072.
+Digital Object Identiﬁer 10.1109/JSAC.2021.3065072
+surroundings. Video streams are augmented with informative
+labels. Sensor data needs to be gathered and analyzed to
+detect anomalies. A remote surgery system needs to update
+the positions of the surgical tools. From a system perspective,
+these examples share a common description: a source gener-
+ates time-stamped status update messages that are transmitted
+through a network to one or more monitors. A wareness of the
+state of the remote sensor or system needs to be as timely as
+possible.
+Research efforts directed toward low-latency networks are
+underway. Machine-to-machine communication and the tactile
+internet, each requiring link delays of just a few millisec-
+onds, were key drivers for the 5G cellular standard [1]–[3].
+Edge cloud computing that will eliminate transcontinental
+round-trip propagation delays on the order of 40 ms is another
+essential ingredient. However, while new systems supporting
+low-latency communication are necessary, they are also not
+sufﬁcient for timely operation. Packet congestion in networks
+and backlogged jobs in edge-cloud processing centers may
+preclude the timely delivery of updates.
+From these observations, timeliness of status updates has
+emerged as a new ﬁeld of network research. It has been
+shown, even in the simplest queueing systems, that timely
+updating is not the same as maxim izing the utilization of the
+system that delivers these updates, nor the same as ensuring
+that updates are received with minimum delay [4]. While
+utilization is maximized by sending updates as fast as possible,
+this strategy will lead to a monitor receiving delayed updates
+that were backlogged in the communication system. In this
+case, the timeliness of status updates at the receiver can be
+improved by reducing the update rate. On the other hand,
+throttling the update rate will al so lead to a monitor having
+unnecessarily outdated status information because of a lack of
+updates.
+This has led to new interest in Age of Information (AoI)
+performance metrics that describe the timeliness of a monitor’s
+knowledge of an entity or process. AoI is an end-to-end metric
+that can be used to characterize latency in status updating
+systems and applications. An update packet with timestamp
+u is said to have age t − u at a time t ≥ u. An update is
+said to be fresh when its timestamp is the current time t and
+its age is zero. When the monitor’s freshest
+1 received update
+at time t has time-stamp u(t), the age is the random process
+Δ(t)= t − u(t).
+While this AoI survey focuses on recent work on age,
+we note that data freshness has been a recurring research
+theme. Periodic transactions updating real time databases [5],
+1 One update is fresher than another if its age is less.
+0733-8716 © 2021 I EEE. Personal u se is perm itted, but republication/redistri bution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 2 ---
+1184 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+[6] was perhaps the earliest use of freshness. In [5] sensors
+wrote time-stamped fresh meas urements into a real-time data-
+base and the age of an update was used to enforce concurrency
+of computations based on multiple measurements. Other early
+studies of timeliness include modeling and maximizing the
+freshness of query responses from a data warehouse [7],
+distributed QoS routing based on aged and imprecise network
+state information [8], network architectures that limit the
+“degree of staleness ” of a cache [9], and ad hoc networking
+mechanisms that avoid propagation of stale route information
+[10] and that balance network congestion against nodes having
+stale information [11]. For web- caching, page-refresh policies
+have been tuned to maximize the freshness of cached pages
+[12] using an age metric in which age accumulated once the
+cached copy became outdated. Also noteworthy is [13] in
+which updates from a source are distributed over a graph by
+a gossip network.
+The initial motivation for [4] came from the study of
+vehicular safety messaging over a CSMA network, initiated in
+[14] and continued in [15]. Over a random graph of vehicular
+nodes in a DSRC network, a round robin schedule was shown
+to lead to an average status-age that is smaller under the
+condition that nodes’ updates p iggyback each others’ updates
+[15]. These simulation studies of vehicular updating [14],
+[15] prompted the AoI analysis in single-source single-server
+queues [4]. In contrast to the prior work [5], [12], [13] based
+on status update age, [4] focused on the impact of random
+service times on the age of delivered updates and showed that
+minimizing age required balancing the rate of updates against
+congestion. The takeaway message was that both the update
+arrivals and the service system could be designed, tuned, and
+even controlled to minimize the age.
+This survey focuses on recent contributions to AoI analy-
+sis. Section II introduces the age process and associated
+age metrics, and basic methods for the analysis of AoI.
+Section III summarizes AoI results in single-server queues,
+in order to demonstrate how AoI is inﬂuenced by the
+update arrival rate, the queue discipline, and packet man-
+agement schemes designed explicitly to optimize freshness.
+This leads to a review of queueing networks, with a focus
+on scheduling updates of multip le sources at multiple servers
+in Section IV. This is followed in Section V by the study of
+energy-constrained updating. Here the emphasis is on energy
+harvesting systems in which a sensor’s ability to transmit
+an update is constrained by its harvesting process. In this
+area, we examine generate-at-will sources that can generate
+a fresh update whenever they wish. Generate-at-will models
+are further explored in the context of sampling, estimation
+and control in Section VI. This is followed by a study of
+wireless networks in Section VII and a discussion of various
+applications of AoI in Section VIII. Finally, the conclusion in
+Section IX discusses potential application areas of AoI.
+II. A
+OIM ETRICS AND ANALYSIS
+As depicted in Figure 1(a), the canonical updating model
+has a source that submits fresh updates to a network that
+delivers those updates to a destination monitor. In a complex
+Fig. 1. (a) Fresh updates from a sour ce pass through the network to a
+destination monitor. Monitor 1 (marked by •) sees fresh update packets at
+the network access link. (b) Since monitor 1 sees fresh updates as a point
+process at times ti, its age process Δ 1(t) is reset to zero at times tj . Since the
+destination monitor sees updates that are delivered at times t
+j after traveling
+through the network, its age process Δ( t) is reset to Δ( t
+i)= t
+j − tj ,w h i c h
+is the age of update j when it is delivered. For the nth delivered update of the
+Δ( t) process, Yn, Tn and Dn are the interarrival, system and inter-departure
+times, and An is the corresponding age peak. The shaded area Qn is employed
+for average age analysis.
+system, there may be additional monitors/observers in the
+network that serve to track the ages of updates in the network.
+For example, Figure 1(a) depicts an additional monitor that
+observes fresh updates as they enter the network.
+These fresh updates are submitted at times t
+1,t2,... and
+this induces the AoI process Δ1(t) shown in Figure 1(b).
+Speciﬁcally, Δ1(t) is the age of the most recent update seen
+by a monitor at the input to the network. Because the updates
+are fresh, Δ
+1(t) is reset to zero at each ti.H o w e v e r ,i nt h e
+absence of a new update, the age Δ1(t) grows at unit rate. If
+the source in Fig. 1 submits fresh updates as a renewal point
+process, the AoI Δ
+1(t) is simply the age (also known as the
+backwards excess) [16], [17] of the renewal process.
+These updates are delivered to the destination monitor at
+corresponding times t
+1,t 
+2
+,... . Consequently, the AoI process
+Δ(t) at the destination monitor is reset at time t
+j to Δ(t
+j)=
+t
+j − tj , the age of the jth update when it is delivered. Once
+again, absent the delivery of a newer update, Δ(t) grows
+at unit rate. Hence the age processes Δ1(t) and Δ(t) have
+the characteristic sawtooth patterns shown in Figure 1(b).
+Furthermore, any other monitor in the network that sees
+updates arrive sometime after they are fresh, will have an age
+process resembling Δ(t).
+In the rest of Section II, we describe three approaches to
+AoI analysis. We start with me thods that analyze the limiting
+time-average age by graphical decomposition of the area under
+the sawtooth function Δ(t). We next introduce the average
+peak age metric and then the stochastic hybrid systems (SHS)
+approach to AoI analysis. This is followed by a discussion
+of nonlinear age penalty functions and functionals of the age
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 3 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1185
+process that are designed to capture the role of age in different
+classes of applications.
+A. Time-Average Age
+Initial work applied graphical methods to sawtooth age
+waveforms Δ(t) to evaluate the time-average AoI
+Δ T = 1
+T
+ T
+0
+Δ(t)dt. (1)
+in the limit of large T . While this time average is often called
+the AoI, this survey employs AoI and age as synonyms that
+refer to the process Δ(t).
+Figure 1(b) shows a sawtooth sample path of an age process
+Δ(t) in greater detail. For the nth delivered update, Y
+n = tn −
+tn−1 and Tn = t
+n − tn denote the interarrival time and system
+time of the update. As shown on the right side of Figure 1(b),
+the key idea in the graphical method of age analysis is to
+decompose the area deﬁned by the integral in (1) into a sum
+of trapezoidal areas
+Qn = 1
+2(Tn + Yn)2 − 1
+2T2
+n = YnTn + Y 2
+n /2. (2)
+When (Yn,T n) is a stationary ergodic process, the
+time-average AoI Δ = limT∞ Δ T satisﬁes2
+Δ= E[Qn]
+E[Yn] = E[YnTn]+ E[Y 2
+n ]/2
+E[Yn] . (3)
+Equation (3) can be applied to a broad class of service
+systems, including both lossless FCFS systems as well as lossy
+last-come-ﬁrst-served (LCFS) systems in which updates are
+preempted and discarded. Furt hermore, it makes no speciﬁc
+assumptions regarding other trafﬁc that might share the system
+with the update packets of interest.
+However, AoI analysis can be challenging. With respect
+to (3), a large interarrival time Yn allows the queue to empty,
+yielding a small waiting time and typically a small system
+time Tn.T h a ti s ,Yn and Tn tend to be negatively correlated
+and this complicates the evaluation of E [TnYn].
+B. Peak Age
+The challenge in evaluating E [TnYn] prompted the intro-
+duction of peak age of information (P AoI) [19], an alternate
+(and often more tractable) age metric. Referring to Fig. 1(b),
+we observe that the age process Δ(t) reaches a peak
+An = Tn−1 + Dn (4)
+the instant before the service completion at time t
+n.A s
+an alternative to the computation of the average age, [19]
+proposed the average peak age of information (P AoI)
+Δ
+(p) = lim
+N →∞
+1
+N
+N
+n=1
+An. (5)
+2This decomposition is not unique. As can be seen in Fig. 1(b), an alternate
+approach [18] shows Qn = DnTn− 1 + D2
+n/2 where Dn = t
+n − t
+n− 1
+is the nth inter-departure time. This implies an updating system has average
+age
+Δ= E[Qn]
+E[Dn] = E[DnTn− 1]+ E[D2
+n/2]
+E[Dn] .
+Under mild ergodicity assumptions, the P AoI is 3
+Δ(p) = E[A]= E[Tn−1]+ E[Dn]. (6)
+Hence P AoI avoids the computation of E [TnYn], but, like the
+average age, the peak age captures the key characteristics
+of the age process. If the system is lightly loaded, then the
+average inter-departure time E [D] will be large; conversely as
+the system load gets heavy, the average system time E [T] will
+become large.
+For single-server queues, it has been observed [20] that by
+deﬁning t
+
+−1 =0 and T−1 =Δ ( 0 )that
+Δ(t)= Tn−1 +( t − t
+n−1),t ∈ (t
+n−1,t 
+n). (7)
+for n =0 , 1, 2,... . Thus the sample path of Δ(t) is completely
+determined by the point process {(t
+n,T n): n =0 , 1,... }.
+Since the departure times t
+n can be reconstructed from the
+inter-departure sequence Dn and (4) implies Dn = An −Tn−1,
+the sequence of pairs (Tn−1,An) is also sufﬁcient to recon-
+struct the age process Δ(t). This shows that the age peaks An
+are a fundamental characterization of the age process [20].
+C. Stochastic Hybrid Systems for AoI Analysis
+An alternate approach to aver age age analysis employing a
+stochastic hybrid system (SHS) [21] was introduced in [22].
+It was shown that age track ing can be implemented as a
+simpliﬁed SHS with non-negative linear reset maps in which
+the continuous state is a piecewise linear process [23]–[25].
+For ﬁnite-state systems, this led to a set of age balance
+equations and simple conditions [22, Theorem 4] under which
+the expected age converges to a ﬁxed point. A description of
+this simpliﬁed SHS for AoI analysis now follows.
+In the SHS approach, the network shown in Fig. 1(a) has
+a hybrid state [q(t),x(t)] such that x(t) ∈ R
+1×n and q(t) ∈
+Q = {0,...,M } is a continuous-time Markov chain. For AoI
+analysis, q(t) describes the discrete state of a network while
+the real-valued age vector x(t) describes the continuous-time
+evolution of a collection of age-related processes. One of the
+components of x(t) is the age Δ(t) at a monitor of interest.
+In the graph representation of the Markov chain q(t), each
+state q ∈Q is a node and each transition l ∈L is a directed
+edge (ql,q 
+l) with transition rate λ(l) from state ql to q
+l.
+Associated with each transition l is a transition reset mapping
+Al ∈{ 0, 1n×n} that induces a jump x = xAl in the contin-
+uous state x(t). Unlike an ordinary continuous-time Markov
+chain, the SHS Markov chain m ay include self-transitions in
+which the discrete state is unchanged because a reset occurs
+in the continuous state. Furthermore, for a given pair of states
+q,q  ∈Q , there may be multiple transitions l and ˆl in which
+q(t) jumps from q to q but the transition maps Al and Aˆl
+are different.
+For each state ¯q, we denote the respective sets of incoming
+and outgoing transitions by
+L
+¯q = {l ∈L : q
+l =¯q}, L¯q = {l ∈L : ql =¯q}. (8)
+3 There is also more than one way to calculate PAoI. Fig. 1(b) reveals that
+An = Yn + Tn. It follows that PAoI is also Δ (p) = E[Yn]+ E[Tn],w h i c h
+is the decomposition in [18].
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 4 ---
+1186 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+Assuming the discrete state Markov chain is ergodic, q(t) has
+unique stationary probabilities ¯π =[ ¯π0 ··· ¯πM ] satisfying
+¯π¯q
+
+l∈L ¯q
+λ(l) = 
+l∈L
+¯q
+λ(l)¯πql , ¯q ∈Q ; 
+¯q∈Q ¯π¯q =1 . (9)
+The limiting average age vector E [x] = limt→∞ E[x(t)] can
+be found by solving a set of linear equations [22, Theo-
+rem 4]. Speciﬁcally, if the discrete-state Markov chain q(t)
+is ergodic with stationary distribution ¯π > 0 and there exists
+a non-negative vector ¯v =[ ¯v0 ··· ¯vM ] such that
+¯v¯q
+
+l∈L ¯q
+λ(l) = 1¯π¯q +
+
+l∈L
+¯q
+λ(l) ¯vql Al, ¯q ∈Q , (10)
+then the average age is E [x]= 
+¯q∈Q ¯v¯q . This SHS method
+is extended in [26, Theorem 1] to provide the stationary
+age moments limt→∞ E
+
+[xm
+1 (t) ··· xm
+n (t)]
+
+and stationary age
+MGF limt→∞ E
+
+[esx1(t) ··· esxn(t)]
+
+of the age process x(t).
+D. Nonlinear Age Functions
+Although the AoI Δ(t) grows at unit rate, the performance
+degradation caused by information aging may not be a linear
+function of time. For instance, consider the problem of esti-
+mating the state of a Gaussian Linear Time-Invariant (L TI)
+system: If the system is stable, the state estimation error
+is a sub-linear function of Δ(t) that converges to a ﬁnite
+constant as Δ(t) →∞ [27]; if the system is unstable, the state
+estimation error grows exponentially with Δ(t) [28], [29].
+One approach to characterizing this nonlinear behavior is
+to deﬁne freshness and staleness as nonlinear functions of the
+AoI [30]–[33]. Since stale data is usually less desirable than
+fresh data [12], [13], [34]–[38], dissatisfaction with informa-
+tion staleness (or need for data refreshment) can be represented
+by a non-decreasing penalty function p(Δ(t)) of the age
+Δ(t). Similarly, information fre shness can be characterized by
+a non-increasing utility function u(Δ(t)) [13], [35]. Notice
+that because the AoI Δ(t) is a function of time t, p(Δ(t))
+and u(Δ(t)) are both time-varying, as shown in Fig. 2. In
+practice, the choice of monotonic AoI functions p(·) and u(·)
+is application-speciﬁc, as illustrated by the examples provided
+below and in [12], [13], [35]–[38]. In addition, applications of
+non-monotonic AoI functions were explored in [39], [40].
+1) Auto-Correlation Function: The auto-correlation func-
+tion E[X
+∗
+t Xt−Δ( t)] of a source signal Xt can be used to eval-
+uate the freshness of the sample Xt−Δ( t) [31]. For stationary
+sources, |E[X∗
+t Xt−Δ( t)]| is a nonlinear function of the AoI
+Δ(t). For example, in stationary ergodic Gauss-Markov block
+fading channels, the impact of channel aging can be char-
+acterized by the auto-correlation function of fading channel
+coefﬁcients. When the AoI Δ(t) is small, the auto-correlation
+function and the data rate both decay with respect to Δ(t);
+when Δ(t) is large, the auto-correlation function and the data
+rate are not monotonic on the AoI [39].
+2) Real-Time Signal Estimation Error: Suppose samples of
+a Markov source Xt are forwarded to a remote estimator
+that reconstructs a causal estimate ˆXt.L e t Si and Di denote
+the generation time and delivery time of the i-th sample,
+respectively. If the sampling times {Si} are independent of
+Fig. 2. Two examples of non-linear age functions, where Si and Di are the
+generation time and delivery time of the i-th sample, respectively.
+the observed Markov source {Xt : t ≥ 0}, one can show that
+the mean-squared estimation error at time t is an increasing
+age function p(Δ(t)) [22], [27], [41]. However, if the {Si}
+are chosen based on causal knowledge of the source, the esti-
+mation error is not necessarily a function of Δ(t) [27], [41].
+The above result can be generalized to the state estimation
+error of feedback control systems [28], [29]. Consider a linear
+control system, where a controller observes the state Xt ∈ Rn
+of a plant and generates a control signal Ut ∈ Rm to adjust the
+operation of the plant, where the plant is disturbed by Gaussian
+noise N
+t. The state evolution of the plant is governed by a
+linear equation
+Xt+1 = AXt + BUt + Nt, (11)
+where the {Nt} are i.i.d. zero-mean Gaussian noise vec-
+tors with covariance matrix Σ. The constant matrices A ∈
+Rn×n and B ∈ Rn×m are the system and input matri-
+ces, respectively, where (A, B) is assumed to be control-
+lable. Under some assumptions, the state estimation error
+can be proven to be independent of the adopted control
+policy for determining U
+t [42]. If the sampling times {Si}
+are independent of the state process Xt, the mean-square
+state estimation error is an increasing age penalty function
+p(Δ(t)) = Δ( t)−1
+k=0 tr[AkΣ(AT )k] [28], [29]. On the other
+hand, if the {Si} are based on past values of the system state,
+the estimation error is not necessarily a function of the AoI.
+3) Information Theoretic Freshness Metrics: Let
+Wt = {(XSi ,S i): Di ≤ t} (12)
+denote the samples that have been delivered to the receiver by
+time t. One can use the mutual information [43]
+I(Xt; Wt)= H(Xt) − H(Xt|Wt), (13)
+i.e., the information the received samples Wt carry about the
+current source value Xt, to evaluate the freshness of Wt.
+If I(Xt; Wt) is close to H(Xt),t h es a m p l eWt contains a
+lot of information about Xt and is considered to be fresh; if
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 5 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1187
+I(Xt; Wt) is near 0, Wt provides little in formation about Xt
+and is deemed to be obsolete.
+If Xt is a stationary Markov chain and the sampling times
+{Si} are independent of the source {Xt : t ≥ 0}, one can use
+the data processing inequality [44, Theorem 2.8.1] to show that
+I(Xt; Wt)= I(Xt; Xt−Δ( t)) is a non-negative non-increasing
+function u(Δ(t)) of Δ(t) [32]. A similar result holds in the
+case that Xt is a stationary discrete-time Markov chain with
+memory k, where each sample Vt =( Xt,X t−1,...,X t− k+1)
+should contain the source values at k successive time instants.
+Let Wt = {(VSi ,S i): Di ≤ t},t h e n Vt−Δ( t) is a suf-
+ﬁcient statistic of Wt for inferring Xt and I(Xt; Wt)=
+I(Xt; Vt−Δ( t)) is a non-negative non-increasing function of
+Δ(t). One can also use the conditional entropy H(Xt|Wt)
+to represent the staleness of Wt [45]–[47]. If the sampling
+times {Si} are independent of {Xt : t ≥ 0} and Xt is a
+stationary Markov chain, then H(Xt|Wt)= H(Xt|Xt−Δ( t))
+is a non-decreasing penalty function p(Δ(t)) of the AoI Δ(t).
+If (i) Xt is not a Markov chain or (ii) the {Si} are
+determined based on causal knowledge of Xt,t h e nI(Xt; Wt)
+and H(Xt|Wt) are not necessarily monotonic functions of
+the AoI. Recently, conditional entropy and its variations were
+found useful for characterizing the minimum training error of
+supervised learning based time-series forecasting [40]. In these
+applications, the Markov property may not hold and the
+training error is not always monotonic in Δ(t).
+4) Age Violation Probability: If p(Δ(t)) is chosen as the
+indicator function [48]
+p(Δ(t)) = 1
+{Δ( t)>d} =
+
+1, if Δ(t) >d ;
+0, if Δ(t) ≤ d, (14)
+then the fraction of time such that Δ(t) exceeds a threshold
+d is given by
+Pr{Δ(t) >d } = lim
+T→ ∞
+1
+T
+ T
+0
+1{Δ( t)>d}dt. (15)
+Therefore, the age violation probability is a time-average of
+the indicator age penalty function in (14).
+5) Soft Updates: Another instance where nonlinear age
+metrics appear is in soft updates [49], [50]. This setting models
+human and social media interactions where an update consists
+of viewing and digesting many small pieces of information
+posted, that are of varying importance, relevance, and interest
+to the monitor. Most of the AoI literature considers hard
+updates, which are contained in information packets. A hard
+update takes effect and reduces the age instantaneously when
+the update is delivered to the monitor. This is referred to as
+instantaneous decay in Fig. 3. The time for the update to take
+effect (denoted by c
+1 for the ﬁrst update in the ﬁgure) is the
+service time. In contrast, a soft update gradually reduces the
+age while the source is delivering the update. Depending on
+the updating model, this gradual decrease may yield nonlinear
+instantaneous age functions.
+References [49], [50] consider two models for the age
+function a(t) of the soft update process: In the ﬁrst model,
+the rate of decrease in age is proportional to the current
+age: da(t)/dt = −αa(t),w h e r eα is a ﬁxed constant. This
+is motivated by new information being most valuable and
+Fig. 3. Hard and soft updates: Hard upda tes take effect after a service time
+but yield instantaneous decay. Soft updates start taking effect right away, but
+gradually over time, giving rise to exponential or linear decay depending on
+the model.
+innovative when the current information is most aged. This
+model leads to an exponential decay in the age in Fig. 3. This
+exponential decay is consistent w ith information dissemination
+in human interactions where the most important information is
+conveyed/displayed ﬁrst, reducing the age faster initially, and
+the subsequent less important information follows, reducing
+the age more slowly. In the second model, the rate of decrease
+in age is not a function of the current age, rather it is constant:
+da(t)/dt = −α. In this case, the age decreases linearly,
+a ss h o w ni nF i g .3 .
+E. Functionals of Age Processes
+One can use a non-decreasing functional
+4 f({Δ(t): t ≥ 0})
+of the age process {Δ(t): t ≥ 0},a l s ot e r m e dage penalty
+functional, to measure the dissatisfaction for having aged
+information at the monitor [48], [52]–[54]. Examples of age
+penalty functionals include the time-average age (1) and the
+time-average age penalty
+f
+avg-penalty({Δ(t): t ≥ 0}) = lim
+T→ ∞
+1
+T
+ T
+0
+p(Δ(t))dt, (16)
+where p:[ 0, ∞ ) 	→ R can be any non-decreasing function.
+We note that the peak age (5) is not an age penalty
+functional.5 In addition, neither the peak age violation
+probability limN →∞ (1/N) N
+n=1 1{An>d} nor the peak age
+penalty limN →∞ (1/N) N
+n=1 p(An), with p(·) being a
+non-decreasing penalty function, are age penalty functionals.
+III. A GE IN ELEMENTARY QUEUES
+In this section, we examine AoI when the network
+in Fig. 1(a) is an elementary queue and sources submit
+updates as a stochastic process, independent of the queue state.
+This model includes the M/M/1, M/D/1 and D/M/1 queues
+4 A functional is a mapping from functi ons to real numbers. A functional f
+is non-decreasing if f({Δ 1(t): t ≥ 0}) ≤ f({Δ 2(t): t ≥ 0}) whenever
+Δ 1(t) ≤ Δ 2(t) for all t ≥ 0 [51, p. 281].
+5 The claim that “the peak age is a non- decreasing functional of the age
+process” in [48], [52]–[56] is wrong. In fact, one can increase an age process
+Δ 1(t) to create another age process Δ 2(t) satisfying (i) all peaks of Δ 1(t)
+are also peaks of Δ 2(t) and (ii) Δ 2(t) has some additional smaller peaks
+that do not exist in Δ 1(t). Even though Δ 2(t) ≥ Δ 1(t), these additional
+low peaks can be chosen so that the average of peaks in Δ 2(t) is smaller
+than that in Δ 1(t). Therefore, the average peak age in (5) may drop even
+though the age process is increased.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 6 ---
+1188 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+and versions of those queues that incorporate preemption (in
+service or in waiting) or blocking of new arrivals.
+While space considerations preclude an in-depth discussion
+of the entire literature of AoI in queues, there are a number
+of other notable contributions. For a single updating source,
+distributional properties of the age process were analyzed for
+the D/G/1 queue under ﬁrst-come-ﬁrst-served (FCFS) service
+[57]. General queueing systems in the form of G/G/1/1 queues
+were analyzed in [58], [59]. Non-i.i.d. service times mod-
+eled as a Gilbert-Elliott process with good and bad serving
+states were studied in [60]. Packet deadlines were found
+to improve AoI [61]. Age-optimal preemption policies were
+identiﬁed for updates with deterministic service times [62].
+AoI was evaluated in the presence of packet erasures at the
+M/M/1 queue output [63] and for memoryless arrivals to a
+two-state Markov-modulated service process [64].
+In Section III-A, we examine average age for a single source
+sending updates through a queue. We focus on arrival and
+services processes that are either deterministic or memoryless
+in order to characterize elementary properties of the average
+age. This is followed by Section III-B, which uses zero-wait
+systems to derive age lower bounds, and Section III-C. which
+examines age in queues that serve multiple sources.
+A. Age in Single-Source Single-Server Queues
+This review is based chieﬂy on AoI results in [4], [18],
+[20]. We start with variations on non-preemptive and pre-
+emptive single server queues, for which the representation
+in [20] of the age process Δ(t) by the point process
+{(t
+
+n,T n): n =0 , 1,... } has led to a panoply of results,
+including the extension to distributional results for the sta-
+tionary age Δ(t) and the peak age An and also generalization
+to GI/GI/1 queues.
+In this discussion, each server has expected service time
+E[S] and each service system has i.i.d. interarrival times with
+expected value E [Y ]. For consistency of presentation, λ =
+1/E[Y ] is the arrival rate, μ =1 /E[S] is the service rate, and
+the system has offered load ρ= λ/μ. Numerical comparisons
+will be presented in terms of the load ρ with 1/μ =1 .
+For the FCFS M/M/1 queue with offered load ρ,i tw a s
+shown [4] using (3) that the average age is
+Δ M/M/1 = 1
+μ
+
+1+ 1
+ρ + ρ2
+1 − ρ
+	
+. (17)
+For ﬁxed service rate μ, the age-optimal utilization ρ∗ satisﬁes
+ρ4 − 2ρ3 + ρ2 − 2ρ +1 = 0 and thus ρ∗ ≈ 0.53.T h e
+optimal age is achieved by choosing a λ that biases the server
+towards being busy only slightly more than being idle. Note
+that we would want ρ close to 1 if we wanted to maximize
+the throughput. If we instead wanted to minimize packet delay,
+we would want ρto be close to 0. Analysis of the M/D/1 queue
+[20] and the D/M/1 queue [22] yielded
+Δ
+M/D/1 = 1
+μ
+ 1
+2(1 − ρ) + 1
+2 + (1 − ρ)e x p (ρ)
+ρ
+	
+, (18)
+Δ D/M/1 = 1
+μ
+ 1
+2ρ + 1
+1+ ρW(− exp[−1/ρ]/ρ)
+	
+, (19)
+where W(·) denotes the Lambert-W function.
+Fig. 4. Time-average age as a function of offered load ρ= λ/μ for the FCFS
+M/M/1, M/D/1 and D/M/ 1 queues. The expected service time is 1/μ =1 .
+Fig. 4 presents age comparisons of the M/M/1, M/D/1,
+and D/M/1 queues from [4]. For each queue there is an
+age-minimizing offered load ρ. Among these FCFS queues,
+we observe that for each value of system load, D/M/1 is
+better than M/D/1, which is better than M/M/1. At low load,
+randomness in the interarrivals dominates the average status-
+age. At high load, M/D/1 and D/M/1 substantially outperform
+M/M/1 because the determinism in either arrivals or service
+helps to reduce the average queue length.
+What these FCFS queues make apparent is that the arrival
+rate can be optimized to balance update frequency against
+the possibility of congestion. This prompted the study of
+lossy queues that may discard an arriving update while the
+server was busy or replace an older waiting update with a
+fresher arrival [18], [19], [65]. These strategies, identiﬁed as
+packet management [18], [19], include the M/M/1/1 queue
+that blocks and clears a new arrival while the server is busy,
+the M/M/1/2 queue that will queue one waiting packet but
+blocks an arrival when the waiting space is occupied, and the
+M/M/1/2
+∗ queue that will preempt a waiting packet with a
+fresh arrival. 6
+Another system in this category is the LCFS queue with
+preemption in service that perm its a new arrival to preempt an
+update in service. Extending the notation introduced in [18],
+we call this an M/M/1
+∗ queue. These systems were shown
+[18] to achieve average ages
+Δ M/M/1∗ = 1
+μ
+
+1+ 1
+ρ
+	
+, (20a)
+6 While Kendall notation A/S/c is consistently used to signify the Arrival
+process, the Service time, and the number of servers c, there is no consensus
+on a fourth entry for these systems. Here we (mostly) follow [18], with the
+fourth entry classifying how arrivals access the servers: ·/·/c is a c server
+system with an unbounded queue; ·/·/c/m indicates a system capacity of
+m updates (i.e. an FCFS waiting room of size m − c) with new arrivals
+blocked when the waiting room is full, and ·/·/c/m
+∗ with m = c +1 ,
+indicates a single packet waiting room with preemption in waiting. We then
+add the convention ·/·/c
+∗ to signify that a new arrival preempts the oldest
+update in service. (Since preempted packets are discarded, the waiting room
+becomes irrelevant.) Note that in [22], the M/M/1 ∗ and M/M/1/2 ∗ queues
+were called LCFS-S and LCFS-W, with S and W denoting preemption, S in
+Service and W in Waiting. In both [18], [ 22], it was assumed that obsolete
+updates were discarded. In [20], the f ourth entry was the size of the waiting
+room, LCFS designated queues in w hich a new arrival moved in front of
+any waiting updates and the preﬁxes P and NP indicated whether the service
+was preemptive (P) or Non-Preemptive (NP), i.e. does the new arrival go
+immediately into service or simply to the head of the waiting line. [20] also
+used sufﬁxes (C) and (D) to indicate whether the queue was work Conserving
+or whether obsolete updates were Discarded. Thus the M/M/1/2
+∗ queue [18],
+the M/M/1 LCFS-W queue [22] and the M/M/1/1 NP-LCFS (D) queue [20]
+were all the same queue.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 7 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1189
+Fig. 5. Time-average age of the FC FS M/M/1/2 and M/M/1/1 blocking
+queues, the LCFS M/D/1 ∗, M/M/1 ∗,a n dD / M / 1∗ queues with preemption in
+service, and the M/M/1/2 ∗ queue with preemption in waiting. The expected
+service time is 1/μ =1 .
+Δ M/M/1/1 = 1
+μ
+
+1+ 1
+ρ + ρ
+1+ ρ
+	
+, (20b)
+Δ M/M/1/2∗ = 1
+μ
+
+1+ 1
+ρ + ρ2(1 + 3ρ+ ρ2)
+(1 +ρ+ ρ2)(1 +ρ)2
+	
+, (20c)
+Δ M/M/1/2 = 1
+μ
+
+1+ 1
+ρ + 2ρ2
+1+ ρ+ ρ2
+	
+. (20d)
+From (20), simple algebra will verify Δ M/M/1∗ ≤ Δ M/M/1/1 and
+Δ M/M/1∗ ≤ Δ M/M/1/2∗ ≤ Δ M/M/1/2. The age performance of the
+M/M/1/1 system is less easy to classify, although the relative
+performance of the M/M/1/1 system improves as ρ increases.
+Figure 5 compares the average age for these queues. At low
+load, all of these queues achieve essentially the same average
+age (1 + 1/ρ)/μ as the M/M/1 and M/D/1 FCFS queues
+evaluated in Fig. 4. When the queue is almost always empty,
+the LCFS ability for the freshest update to jump ahead of
+older update packets is negated. However, at high loads, packet
+management ensures the M/M/1/2
+∗, M/M/1/1 and M/M/1 ∗
+queues have average age that decreases with offered load. 7 In
+fact, as the arrival rate λ →∞ ,t h ea g eΔ M/M/1∗ will approach
+the 2/μ lower bound for exponential service systems because
+bombarding the server with new update packets ensures that
+a fresh status update packet will enter the waiting room the
+instant before each service completion.
+We can conclude for memoryless service that preemption of
+old updates by new always helps. However, the comparisons
+are muddier between buffering and discarding. This is par-
+ticularly true when we compare Δ M/M/1, which buffers every
+update, against the ages Δ M/M/1/1 and Δ M/M/1/2.
+We also note that the apparent superiority of preemption
+in service is somewhat misleading; this property holds for
+memoryless service times, but not in general. For example, the
+M/D/1
+∗ and D/M/1∗ queues, both of which support preemption
+in service, have average ages [20, pp. 8318]
+Δ M/D/1∗ = 1
+μ
+exp(ρ)
+ρ , Δ D/M/1∗ = 1
+μ
+
+1+ 1
+2ρ
+	
+. (21)
+In (21), and also in Fig. 2, we see that the average age Δ D/M/1∗
+of the D/M/1 preemptive server is monotonically decreasing
+in the offered load ρ. This is because no matter how high
+7Because congestion is avoided by blocking packets, Δ M/M/1/2 avoids
+blowing up as ρ →∞ . However, it achieves a minimum age of Δ=2 .61
+at ρ =1 .427 and then becomes an increasing function for ρ> 1.427.F o r
+large ρ, the M/M/1/2 queue admits its next update too quickly.
+the arrival rate λ is (and thus how fast packets are being
+preempted), the departure rate is μ as long as an update is in
+service. By contrast, in the preemptive M/D/1 ∗ queue, Δ M/D/1∗
+has a minimum at ρ =1 and increases without bound for
+ρ> 1. With deterministic unit-time service and arrival rate
+λ = ρ, an update completes service with probability e− ρ.
+As ρ becomes large, too many updates are preempted, and the
+system thrashes, with updates being preempted before they can
+complete service and be delivered to the monitor.
+B. Zero-W ait Updates
+When the update generator (source) can neither observe
+nor control the state of the packet update queue, the optimal
+load ρ
+∗ strikes a balance between overloading the queue and
+leaving the queue idle. Here we derive lower bounds to the
+age Δ by considering a system in which the update generator
+observes the state of the packet update queue so that a new
+status update arrives just as the previous update packet departs
+the queue. Since each delivered update packet is as fresh as
+possible, the average age for this system is a lower bound to
+the age for any queue in which updates are generated as a
+stochastic process independent of the current queue state.
+In this zero-wait system, the update service times S
+n are
+i.i.d. with moments E [S] and E [S2]. Referring to the age
+Δ(t) in Figure 1(b), tn = t
+n−1. This implies update n has
+interarrival time Yn = Sn−1, zero waiting time, and system
+time Tn = Sn.F u r t h e r ,E[YT ]= E[YnTn]= E[Sn−1Sn]=
+(E[S])2. From (3), the average age becomes
+Δ ∗ = 1
+E[S]
+
+E[S2]
+2 +( E[S])2
+
+. (22)
+Thus, for a system with memoryless service times with E [S]=
+1/μ, the minimum average age is Δ ∗
+·/M/1 =2 /μ.M o r e o v e r ,
+since E[S2] ≥ (E[S])2 =1 /μ2, (22) yields the lower bound
+Δ ∗ ≥ 3E[S]
+2 = 3
+2μ. (23)
+This bound holds for all service time distributions and is tight
+when the service times are deter ministic. However, it bears
+repeating that (23) is an age lower bound for service systems
+in which updates are generated as a stochastic process inde-
+pendent of the current queue state. We will see in Section VI
+that a generate-at-will source can exploit the age and queue
+state to achieve even lower AoI.
+C. Multiple Sources at a Single-Server Queue
+When updates have stochastic service times, AoI analysis of
+multiple updating sources sharing a simple queue has proven
+challenging and there have been relatively few contributions
+[22], [66]–[69]. In these papers, each source i generates
+updates as an independent Poisson process of rate λ
+i and the
+update service time S has expected value 1/μ. Thus source i
+has offered load ρi = λi/μ and the total load is ρ= N
+i=1 ρi.
+Extending the single-source age analysis in [70], reference
+[68] derived the average age and average peak age of each
+source. With P
+λ = E[e− λS] denoting the Laplace transform
+of the service time S at λ = N
+i=1 λi, [68] showed that user
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 8 ---
+1190 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+Fig. 6. Status updates in a single-hop, multi-server queueing network.
+i in the M/G/1/1 queue has average age Δi and average peak
+age Δ(p)
+i given by
+Δi = 1
+λiPλ
+, Δ(p)
+i = 1
+λiPλ
++ E[Se− λS ]
+Pλ
+. (24)
+The ﬁrst age analysis of the multi-source FCFS
+M/M/1 queue appeared in [66], which propagated to
+[22]. Unfortunately this analysis had an error, as observed in
+[69]. In a corrected analysis using SHS [71], it was shown
+with ρ− i ≡ ρ− ρi and
+Ei ≡ 1+ ρ−
+
+(1 +ρ)2 − 4ρ− i
+2ρ− i
+, (25)
+that source i has average age
+Δi = 1
+μ
+
+ 1 − ρ
+(ρ− ρ− iEi)(1 − ρEi) + 1
+1 − ρ + ρ− i
+ρi
+
+. (26)
+This result is numerically identical to the independently
+derived result in [69, Theorem 1] and numerically close
+enough to the original claim in [22] that the qualitative
+observations in [22] remain valid.
+Heterogeneous users sharing a single queue have been
+analyzed with different service time distributions [67] and with
+different priorities [72]–[74]. Different queueing disciplines,
+speciﬁcally, FCFS for the lower priority stream and LCFS with
+preemption allowed in service for the higher priority stream,
+have also been explored [72].
+IV . A
+GE IN QUEUEING NETWORKS
+We now examine updates from one or more sources tra-
+versing a network of queues. Our starting point is the single-
+source, single-hop parallel-server network depicted in Fig. 6,
+consisting of one queue with buffer size B ≥ 0 feeding c
+servers. If B is ﬁnite, each packet arriving to a full buffer is
+either dropped or replaces an existing packet in the system.
+If B =0 , the system can keep at most c packets that are
+being processed by the servers. For this class of systems,
+the challenge of AoI analysis is out-of-order packet delivery;
+a packet in service can be rendered obsolete by a delivery of
+another server.
+Section IV -A considers elementary versions of the parallel
+server system, speciﬁcally, the M/M/2 queue with c =2
+servers and B = ∞ buffer space, the M/M/ ∞ queue in which
+an update immediately goes into service, and the M/M/ c
+∗
+queue with a scheduler that preempts the oldest update in
+service if a new update arrives when all servers are busy. This
+is followed by Section IV -B, which examines of age-optimal
+scheduling for the parallel server system, and Section IV -C,
+which presents AoI results for update scheduling in other
+queueing networks.
+A. The Parallel-Server Queue
+The observation in [75] that a single server queue is not
+representative of networks in which packets may be delivered
+via multiple paths prompted AoI analysis of a queue with
+c parallel servers depicted in Fig. 6. Initial work [76], [77]
+addressed the extreme cases, namely the M/M/2 and M/M/ ∞
+queues. Since the M/M/2 queue has inﬁnite buffers, its average
+age can suffer from congestion induced by waiting updates.
+The M/M/2 queue age performance is also penalized by
+obsolete updates remaining in service. Nevertheless, it was
+found that M/M/2 service still could reduce the AoI by an
+approximate factor of 2 relative to M/M/1 [77].
+The M/M/ ∞ age analysis in [77] is complex and does not
+reduce to a simple formula. However, with arrival rate λ and
+per-server rate μ service, the exact AoI Δ
+M/M/∞ was found to
+be subject to the reasonably tight bounds
+1
+μ
+1
+ρ + 1+ ρ+ ρ2
+(1 +ρ)3
+	
+≤ Δ M/M/∞ ≤ 1
+μ
+
+1+ 1
+ρ
+	
+. (27)
+It is not surprising that the upper bound in (27) equals the
+age Δ M/M/1∗ in (20a) since the monitor in the M/M/ ∞ system
+can choose to mimic the M/M/1 ∗ update delivery process by
+discarding all service completions except those by the freshest
+update in the system.
+In [78], the M/M/ c∗ preemptive parallel server system was
+analyzed using SHS. In this system, a fresh update arriving
+when all servers are busy preempts the oldest update in service.
+For this system, the average age was found to be
+Δ M/M/c∗ = 1
+μ
+
+1
+c
+c−1
+i=1
+ρ
+i + ρ + 1
+ρ + 1
+ρ
+c−1
+l=1
+l
+i=1
+ρ
+i + ρ
+
+. (28)
+When ρ= λ/μ  c, one can expect that M/M/ c∗ system will
+approximate the inﬁnite server system. Once again, since the
+M/M/∞ system can mimic this system by discarding service
+completions other than those of the c most recent arrivals,
+Δ
+M/M/∞ ≤ Δ M/M/c∗ .
+B. Scheduling for Parallel Servers
+We now examine update scheduling in the parallel server
+system of Fig. 6. In [48], [52]–[54], (near) age-optimal
+scheduling results were established using sample-path argu-
+ments. These results hold for out -of-order packet arrivals and
+quite general AoI metrics (e.g. , age penalty functions and func-
+tionals), for which AoI analysis is a challenge. Therefore, AoI
+analysis and age-optimal scheduling provide complementary
+perspectives on status update systems.
+Let us consider a Last-Generated, First-Served (LGFS)
+scheduling policy [55] in which the last generated packet is
+served ﬁrst, with ties broken arbitrarily. In the Preemptive
+LGFS (P-LGFS) policy, a fresh packet can preempt an
+old packet that was in service. The preempted packets
+can be dropped or stored back to the queue; whether the
+preempted packets are dropped or stored back to the queue
+does not affect the age performance of the P-LGFS policy.
+In the Non-Preemptive LGFS (NP-LGFS) policy, each server
+must complete sending the current packet before starting
+to serve a fresher packet; in order to reduce the AoI,
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 9 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1191
+the freshest packet should be kept in the queue when packet
+dropping/replacement occurs.
+If the packet service times are exponentially distributed,
+i.i.d. across servers and time, then the P-LGFS policy is
+age-optimal in a strong sense. Speciﬁcally, for arbitrarily
+given packet generation times (S
+1,S2,... ), packet arrival
+times (C1,C2,... ),b u f f e rs i z eB, and number of servers c,
+the P-LGFS policy minimizes any non-decreasing functional
+of the age process, including the time-average age (1) and
+time-average age penalty (16) [48]. 8
+In addition, near age-optim al scheduling results can be
+established for a class of New-Better-than-Used (NBU) service
+time distributions [51], which include exponential distribution
+as a special case.
+9 If the service times are i.i.d. NBU and the
+queue can store at least one packet ( B ≥ 1), then the expected
+time-average age of the NP-LGFS policy is within a small
+additive gap from the optimum, where the gap is invariant of
+the packet generation and arrival times, the number of servers
+c, and the buffer size B [48].
+If packets arrive at the queue in the order of their generation
+times (i.e., Ci ≤ Cj whenever Si <S j ), then the LGFS
+policy reduces to the LCFS policy. Hence, the P-LCFS policy
+is age-optimal and the NP-LCF S policy is near age-optimal
+for in-order arrivals.
+C. Scheduling for Multiple Hops and Multiple Sources
+These scheduling results have been extended to a few
+other network settings. In [52], the scheduling of a single
+packet ﬂow in multi-hop queueing networks was studied. For
+i.i.d. memoryless service times, the P-LGFS policy is optimal
+for minimizing the age processes at all nodes of the network.
+In addition, the NP-LGFS policy is near age-optimal for i.i.d.
+NBU service times.
+Age-optimal scheduling of multiple ﬂows with synchronized
+arrivals in a single-hop queue was investigated in [53]. The
+authors ﬁrst proposed a Preemptive, Maximum Age First,
+Last Generated First Served (P-MAF-LGFS) scheduling policy
+in which the last generated packet from the ﬂow with the
+maximum age is served ﬁrst among all packets of all ﬂows,
+with ties broken arbitrarily. When the packet service times are
+i.i.d. exponentially distributed and the queue has one server,
+the P-MAF-LGFS policy minimizes the stochastic process
+{p
+t(Δ (t)): t ≥ 0} in terms of stochastic ordering, where pt(·)
+is a time-dependent, symmetric, and non-decreasing penalty
+function of the ﬂow age vector Δ (t)=[ Δ 1(t),..., ΔN (t)].
+In addition, a Non-Preemptive, Maximum Age of Served
+Information First, Last Gener ated First Served (NP-MASIF-
+LGFS) policy was introduced in [53]. In the NP-MASIF-LGFS
+policy, the last generated packet from the ﬂow with the
+maximum age of served information is served ﬁrst among all
+packets of all ﬂows, with ties broken arbitrarily. When the
+packet service times are i.i.d. NBU and the queue has multiple
+8However, the P-LGFS policy may not be optimal for minimizing the peak
+age in (5), which is not an age penalty functional.
+9A non-negative random variable X is said to be New-Better-than-Used
+(NBU) [51] if ¯F(τ + t) ≤ ¯F(τ) ¯F(t) holds for all t, τ ≥ 0,w h e r e
+¯F(t)=P r [ X>t ]. Examples of NBU distributions include exponential,
+shifted exponential, geometric, gamma, a nd negative binomial distributions.
+servers, the NP-MASIF-LGFS policy is within a small additive
+gap from the optimum for minimizing the total time-average
+age. If multiple servers are idle, these servers are assigned
+to process different ﬂows. Therefore, the behavior of the NP-
+MASIF-LGFS policy is similar to the maximum age matching
+approach [79] for orthogonal channel systems.
+Motivated by [80], a notion of lexicographic age opti-
+mality, or simply lex-age-op timality, was introduced in [54]
+for scheduling ﬂows with multiple priority levels. A lex-
+age-optimal scheduling policy ﬁrst minimizes the AoI of
+high-priority ﬂows, and then, within the set of optimal poli-
+cies for high-priority ﬂows, achieves the minimum AoI met-
+rics for low-priority ﬂows. When the packet service times
+are i.i.d. exponentially distributed, a Preemptive Priority,
+Maximum Age First, Last-Gener ated, First-Served (PP-MAF-
+LGFS) scheduling policy was shown to be lex-age-optimal in a
+single-hop, single-server queue. In the PP-MAF-LGFS policy,
+the system will serve an informative packet (i.e., a packet that
+is fresher than any delivered packet) that is selected (with ties
+broken arbitrarily at each step ) as follows: (i) among ﬂows
+with informative packets, pick the highest priority class of
+ﬂows; (ii) from the selected priority class, pick the ﬂow with
+the maximum age; (iii) from the selected ﬂow, pick the last
+generated informative packet. The scheduling result in [54]
+complements the AoI analysis of preemptive priority service
+systems for multiple sources [72]–[74].
+V. R
+ESOURCE CONSTRAINED UPDA TING
+In this section, we focus on systems where the ability
+of a sensor to make an update is further constrained by
+external factors. A prominent example is an energy harvesting
+transmitter. A sensor that relies on energy harvested from
+nature cannot transmit continuously; otherwise it may run out
+of energy and risk having overly stale updates at the monitor.
+Therefore, the fundamental question is how to manage the
+harvested energy to send timely status updates.
+We will start with an overview in Section V -A and then
+go on to summarize [81]–[85] that focus on online generate-
+at-will policies with various battery capacities over noise-
+less and erasure channels in Section V -B and Section V -C,
+respectively. In these sections, there is no server and the
+randomness in updating is purely due to uncertain energy
+arrivals. In Section V -D, we summarize works [86], [87],
+where there is an additional server at which the updates arrive
+exogenously, as opposed to being generated at-will.
+A. Overview
+There have been a number of works studying AoI with
+energy harvesting under various assumptions [81]–[111]. With
+the exception of [91], [109], [110], an underlying assumption
+in these works is that energy expenditure is normalized,
+i.e., sending one status update consumes one energy unit.
+For sensors with an unlimited battery capacity, [93] examines
+online policies under stochastic service times, [88] focuses
+on both ofﬂine and online policies with zero service times,
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 10 ---
+1192 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+i.e., with updates being transmitted instantly, 10 and [89] studies
+the effect of sensing costs on AoI when trans mitting through a
+noisy channel. Using a harvest-then-use protocol, [89] presents
+a steady state analysis of AoI under both deterministic and sto-
+chastic energy arrivals. The ofﬂine policy in [88] is extended to
+non-zero, but ﬁxed, service times in [90] for both single and
+multi-hop settings, and in [91] to energy-controlled variable
+service times.
+The online policy in [88] is analyzed through a dynamic
+programming approach in a discrete time setting, and is shown
+to have a threshold structure, i.e., an update is sent only if the
+age grows above a certain threshold and energy is available
+for transmission. Motivated by such results for the inﬁnite
+battery case, [92] then studies the performance of online
+threshold policies for the ﬁnite battery case under zero service
+times. Reference [81] proves the optimality of online threshold
+policies under zero service times for the special case of a
+unit-sized battery, via tools from renewal theory. It also shows
+the optimality of best-effort online policies, where updates
+are sent over uniformly-sp aced time intervals if energy is
+available, for the inﬁnite battery case. Reference [94] shows
+that such a best-effort policy is optimal in the online case of
+multihop networks, thereby extending the ofﬂine work in [90].
+Best-effort is also shown to be optimal, for the inﬁnite battery
+case, when updates are subject to erasures, with and without
+erasure feedback, in [83], [95], [96].
+Under the same system model of [95], reference [97]
+analyzes the best-effort onlin ep o l i c ya sw e l la st h es a v e -
+and-transmit online policy in which the sensor saves some
+energy in its battery before attempting transmission, for the
+purpose of coding to combat channel erasures. A slightly
+different system model is considered in [86], in which update
+arrivals are exogenous, i.e., the generation of fresh updates
+is not controlled by the sensor. With a ﬁnite battery, and
+stochastic service times, reference [86] employs tools from
+stochastic hybrid systems to analyze the long-term average
+AoI. The work in [87] considers a similar queuing framework
+as in [86] and studies the value of preemption in service
+on AoI. Reference [98] also considers a similar approach
+as in [86], [87] under general energy and data buffer sizes.
+An interesting approach is followed in [99] where the idea of
+sending extra information, on top of the measurement status
+updates, is introduced and analyzed for unit-sized batteries and
+zero service times.
+The optimality of threshold policies for ﬁnite batteries
+with online energy arrivals has been shown in [82], [100],
+[101] using tools from renewal theory and a Lagrangian
+framework, which provide closed-form solutions for the
+optimal thresholds. This has also been shown independently
+and concurrently in [102] using tools from optimal stopping
+theory; see Section VI-A for a detailed discussion. Reference
+[103] shows the optimality of threshold policies under general
+age-penalty functions. Online policies for unit-sized batteries
+10In fact, most studies on AoI with energy harvesting sensors focus on the
+zero service time model in which transmission times are negligible relative
+to the large inter-transmission times induced by energy constraints.
+with update erasures also have been shown to have a threshold
+structure in [84], [85].
+In addition to the studies to be detailed in
+Sections V -B, V -C and V -D, several other contributions
+have explored the interplay of age, energy, and damaged or
+lost updates. Erasures without feedback were also considered
+in [112], where a truncated automatic repeat request (T ARQ)
+scheme was developed to retransmit the current status update
+until a time threshold is exceeded or a new update is available.
+The proposed T ARQ scheme was shown to achieve a lower
+average AoI than classical ARQ.
+In [113], [114], optimal transmission policies were derived
+for a generate-at-will source subject to an energy constraint.
+Some updates are damaged or lost and the monitor provides
+ACK/NACK feedback for each packet. For a monitor using
+classic ARQ, fresh updates are always transmitted after a failed
+update since the probability of a failed update is assumed to
+be constant. For a monitor using Hybrid-ARQ, however, it can
+be optimal to retransmit a failed update since the receiver
+can combine packets so that each retransmission has a lower
+error probability. In unknown en vironments, [114] went on to
+use reinforcement learning t echniques. In [106], a setting was
+considered in which a sensor node must decide when to sleep
+to save energy but miss updates or wake and use energy to
+receive updates. An age-threshold based ON-OFF scheme was
+developed to minimize age subject to energy harvesting and
+battery capacity constraints.
+In addition to the previously discussed settings with exoge-
+nous sources of harvested energy, another line of research
+has considered systems in which source nodes harvest energy
+through wireless energy transfer (WET) from an access point
+with a stable energy supply. In [115], a time-slotted system is
+considered. In each time slot, based on the available energies
+at the source nodes, the AoI values of different processes at the
+destination node, and the channel state information, the system
+must determine whether the time slot should be used for
+WET or for an update from a source node. A ﬁnite-state
+ﬁnite-action Markov decision process (MDP) is formulated
+and deep reinforcement learning techniques are used to ﬁnd
+a solution. In a similar setting except with two-way data
+exchange [116], the downlink is assumed to use power splitting
+between WET and data and various tradeoffs between uplink
+and downlink AoI are analyzed.
+Like [115], several studies have developed online poli-
+cies for resource-constrained AoI using a MDP framework.
+In [117], a setting is considered where multiple sensors
+monitor the same process. Each sensor has a different age
+distribution and energy cost and the goal is to choose sensors
+to minimize the age at the destination subject to an energy
+constraint. Tradeoffs between transmit energy and error prob-
+ability have also been examined in an AoI context [109], [110].
+While their settings are slightly different, both papers explore
+the fundamental tradeoff between using more energy in each
+transmission to improve the pr obability of successfully deliver-
+ing an update and reducing age and the potential for depleting
+the battery and consequently increasing age. In [111], a cogni-
+tive radio setting is assumed and a secondary user must decide
+whether to use energy to sense the channel or send updates.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 11 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1193
+Fig. 7. System model for status updatin g over erasure channels. Updates
+packets are erased with probability q. The channel is noiseless when q =0 .
+Other frameworks that combine AoI with energy harvesting
+include multiple access channels [ 104], monitoring with prior-
+ity [105], operational and sensing costs [107], and trade-offs
+between AoI and distortion [108].
+B. Energy Harvesting Noiseless Channels
+In this section, we discuss the results reported in [81], [82].
+In these works, the channel is noiseless with packet erasure
+probability q =0 and energy arrives in single units according
+to a Poisson process with normalized rate λ =1 arrival per
+unit time; see Fig. 7. The energy expenditure is normalized
+so that one update transmission consumes one energy unit.
+In addition, the transmission time of an update is negligible,
+i.e, zero.
+11 Hence, updates are sent as a point process s1,s2,...
+such that si is the time the sensor acquires (and transmits) the
+ith measurement update.
+At time s−
+i , the instant before the ith transmission, the sen-
+sor must have an energy unit. Thus, with E(t) denoting the
+energy in the battery at time t, we have the energy causality
+constraint
+E
+
+s−
+i
+
+≥ 1, ∀i. (29)
+We assume the system starts with an empty battery at time 0.
+The battery evolves over time as
+E
+
+s−
+i
+
+=m i n
+
+E
+
+s−
+i−1
+
+− 1+ A(xi),B
+
+, (30)
+where xi ≜ si −si−1,a n dA(xi) denotes the number of energy
+arrivals in [si−1,s i),a n d B is the battery capacity. Note that
+A(xi) is a Poisson random variable with expected value xi.
+We denote by F , the set of feasible transmission times {si}
+described by (29), (30), and E(0) = 0.
+Let n(t) denote the total number of updates sent by time
+t. We wish to minimize the average AoI. Referring to Fig. 8,
+the area under the age evolution curve by time t is
+Q(t) ≡ 1
+2
+n(t)
+i=1
+x2
+i + 1
+2
+
+t − sn(t)
+2
+. (31)
+The goal is to choose a set of feasible transmission times
+si ∈F such that the long-term average AoI is minimized.
+Equivalently, one can optimize the inter-update times {xi}.
+11Normalized arrival rates and zero transmission times are without loss
+of generality. Extensions to non-normalized arrival rates and ﬁxed nonzero
+transmission times can be directly derived, at the expense of increased AoI
+as the arrival rate decreases and/or the transmission time increases.
+Fig. 8. The age evolution with n(t)=3 updates at times si, with inter-update
+times xi. When updates are successful with probability q< 1,t h e r em a yb e
+multiple transmissions for each update. In this example, updates are sent at
+times l
+i and the ﬁrst successful update at time s1 = l3 was preceded by
+failed transmissions at times l1 and l2.
+Therefore, the goal is to characterize the optimal long-term
+average AoI Δ ∗(B) as a function of the battery size B by
+solving
+Δ ∗(B) ≡ min
+{xi}∈F
+lim sup
+T →∞
+1
+T E[Q(T)]. (32)
+When B = ∞ , the battery size is inﬁnite and no energy
+overﬂow can occur. Let us deﬁne the following policy :
+• Best-Effort Uniform (BU) Updating : [81] The sensor
+is scheduled to send a new update at sn = n, n =
+1, 2, 3,... . The sensor performs the task as scheduled
+if E(s−
+n ) ≥ 1. Otherwise, it stays silent until the next
+scheduled update.
+The best-effort uniform (BU) updating policy is always fea-
+sible. One of the main results of [81] is the following: The
+best-effort uniform updating policy is optimal for B = ∞ ,
+with Δ ∗(∞ )=1 /2.
+When B is ﬁnite, the status update policy should try
+to prevent battery overﬂows, since wasted energy leads to
+performance degradation. On the other hand, owing to the
+nature of AoI, one should also try to send updates as uniformly
+as possible (as seen in the B = ∞ case). The optimal policy
+would then strike a balance between these objectives.
+One main attribute of the optimal policy’s behavior is that
+it has a renewal structure. In particular, deﬁning (E(t), Δ(t))
+as the system state at time t, [82] develops the following
+structural result: For B< ∞ , the optimal update policy for
+problem (32) is a renewal policy for which visits to state (0, 0)
+form a renewal process.
+Based on this result, reference [82] shows that the optimal
+renewal-type status update policy has a multi threshold struc-
+ture: a new status update is transmitted only if the AoI grows
+above a certain threshold that depends on the available battery
+energy. Such thresholds are found via a Lagrangian approach
+in closed-form. Further, it is shown that the thresholds are
+monotonically decreasing in the available energy.
+C. Energy Harvesting Erasure Channels
+In this section, we discuss the results reported in [83]–[85].
+The system model is similar to that described in Section V -B,
+except status updates are subject to erasures. Speciﬁcally,
+the communication channel between the sensor and the desti-
+nation is modeled as a time-invariant noisy channel, in which
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 12 ---
+1194 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+each update transmission gets erased with probability q ∈
+(0, 1), independently from other transmissions.
+Since each update transmission is not necessarily successful,
+we denote the set of update transmission times by {li} and
+the set of times of that are successful by {si}⊆{ li}.T h e
+energy causality constraint in (29) now becomes
+E
+
+l−
+i
+
+≥ 1, ∀i, (33)
+and the battery evolution in (30) becomes
+E
+
+l−
+i
+
+=m i n{E
+
+l−
+i−1
+
+− 1+ A(xi),B }, ∀i, (34)
+where xi ≜ li − li−1 now denotes the inter-update attempt
+delay. We assume s0 = l0 =0 without loss of general-
+ity, i.e., the system starts with fresh information at time 0.
+We denote by Fq the set of feasible transmission times {li}
+satisfying (33), (34), and E(0) = 0.12
+Referring again to Fig. 8, the area under the age evolution
+curve during [0,t ] is still given by Q(t) in (31) and the goal is
+to choose a set of feasible transmission times {li}∈F q such
+that the long-term average AoI is minimized. Therefore, as a
+function of the battery size B, the goal is to solve
+Δ
+ω
+q (B) ≡ min
+{li }∈Fq
+lim sup
+T →∞
+1
+T E[Q(T)]. (35)
+In (35), the superscript ω is used to differentiate between two
+main cases in our treatment :
+1) No updating feedback :( ω ≡ noFB) The sensor has no
+knowledge of whether an update is successful. It can
+only use the up-to-date energy arrival proﬁle and status
+updating decisions, as well as statistical information,
+such as the energy arrival rate and the erasure probability
+of the channel, to decide the upcoming update times.
+2) Perfect updating feedback :( ω ≡ wFB) The sensor
+receives instantaneous, error-free feedback when an
+update is transmitted. Ther efore, it can decide when
+to update next based on the feedback, along with the
+information available in the no-feedback case.
+In view of the two feedback cases, we now present the solution
+of (35) for B = ∞ followed by the special case of B =1 .
+With B = ∞ battery capacity but no updating feedback,
+[83] shows that the best-effort uniform (BU) updating policy is
+optimal. While for the perfect feedback scenario, [83] proposes
+this retransmission-based policy :
+• Best-Effort Uniform With Retransmission (BUR) Updat-
+ing: [83] The sensor is scheduled to send new updates
+at sn = n/(1 − q), n =1 , 2,... . At time sn, the sensor
+keeps sending updates until an update is successful or
+until it runs out of battery.
+Independent of whether an update is successful at time sn,t h e
+BUR updating sensor will keep silent until the next scheduled
+update time s
+n+1. The optimality of BUR updating is shown
+in [83]. We summarize the results in [83] as follows: For the
+AoI minimization problem (35) with a size B = ∞ battery:
+12In [83], it is assumed that E(0) = 1 to simplify the analysis. For E(0) =
+0, the same results would follow after slightly modifying the proofs. We set
+E(0) = 0 for consistency.
+(a) With no updating feedback, BU updating is AoI-optimal
+with
+Δ noFB
+q (∞ )= 1+ q
+2(1 − q). (36)
+(b) With perfect updating feedback, BUR updating is
+AoI-optimal with
+Δ wFB
+q (∞ )= 1
+2(1 − q). (37)
+To prove the above result, reference [83] proposes a
+novel virtual policy based approach that employs energy
+removals. Speciﬁcally, for both BU and BUR updating poli-
+cies, a sequence of virtual policies deﬁned by a time parameter
+T
+0 is constructed. In both cases, the virtual policy initially
+follows the original BU or BUR policy. However, the virtual
+policy guarantees the sensor enters the zero energy state
+by time T
+0. In particular, if zero energy has not previously
+been reached by time T0, the virtual policy will intentionally
+discharge the battery. While these virtual policies are strictly
+suboptimal for ﬁnite T0, they enable the effects of battery out-
+ages and updating errors to be decoupled in the performance
+analysis. Moreover, as T0 →∞ , these virtual BU and BUR
+policies are shown to become AoI-optimal and also converge
+to their original counterparts.
+We now focus on the special case of a ﬁnite battery with
+B =1 in which one update completely depletes the battery.
+Similar to the ﬁnite battery analysis of Section V -B, it will be
+shown that an erasure-dependent threshold policy is optimal
+for the case without feedback. For the case with perfect
+feedback, the focus will be on a class of threshold-greedy
+policies. References [84], [85] developed the following struc-
+tural result: With or without updating feedback, the optimal
+updating policy for problem (35) with a size B =1 battery
+is a renewal policy with i.i.d. inter-update times {y
+i}.T h e
+renewal structure in this result greatly reduces the complexity
+of the problem. Now we need only to optimize the updating
+policy over one renewal interval. How this is done depends
+on whether there is feedback.
+For updating without feedback, reference [84] shows that
+the optimal policy is given by an erasure-dependent threshold
+policy in which a new status update is sent only if the AoI
+grows above a certain threshold that depends on the erasure
+probability q. It is also shown that the optimal threshold is
+non-increasing in q, which is quite intuitive, since the sensor
+should be more eager to send new updates if the erasure
+probability is high.
+For updating with perfect feedback, reference [85] focuses
+on a class of policies in which the ﬁrst update attempt has
+a threshold structure, and the subsequent attempts, if the
+ﬁrst is not successful, follow a greedy structure. This class
+is intuitive because if the ﬁrst update is unsuccessful, then
+the AoI has already grown relatively high, which urges the
+sensor to transmit its subsequent updates as soon as energy is
+available. It is then shown that this class of threshold-greedy
+policies represent a ﬁxed-point equilibrium in the sense that if
+the ﬁrst update attempt is threshold-based then the following
+attempts should be greedy, and, conversely, if the second and
+subsequent update attempts are all greedy then the ﬁrst should
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 13 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1195
+be threshold-based. The optimal threshold-greedy policy is
+then fully characterized.
+While many useful takeaway points can be drawn in Sec-
+tions V -B and V -C, where the focus has been on generate-
+at-will policies, a crucial one is that greedy status updating,
+whenever energy is available, is not always optimal. Rather,
+it is optimal to evenly spread out the status updates over
+time, to the extent allowed by energy availability and energy
+causality. This is achieved by best effort-based policies when
+B = ∞ and threshold-based policies when B is ﬁnite.
+D. Energy Harvesting Channels With Servers
+While the previously discussed studies largely focused
+on a generate-at-will source an d zero service times, several
+papers, including the original work [93], consider a setting
+with stochastic service delays. In [93], the energy harvesting
+process H(t) is assumed to be ergodic with rate η, the source
+is assumed to have inﬁnite battery capacity.
+The source is also assumed to know the state of the server
+and can time its updates relative to the service completions.
+A β-minimum update policy was developed to minimize the
+average age. This policy avoids transmitting an update imme-
+diately after an update with short service time since the payoff
+(in age reduction) from this subsequent update will be small
+whereas the cost is ﬁxed. On the other hand, if an update has a
+long service time, the next update is transmitted immediately
+since the payoff is higher. This policy, which counterintuitively
+can leave the server idle even if there is sufﬁcient energy to
+transmit an update, was shown to outperform “best effort” and
+“ﬁxed delay” policies.
+In a similar setting [86], the average age was characterized
+as a function of the information and energy arrival rates,
+λ and η, respectively, as well as the battery capacity B.
+In this study, the source was assumed to always submit new
+updates immediately to the server. New updates enter service
+if the server is idle and has sufﬁcient energy to service the
+packet. If the server is busy or does not have sufﬁcient energy,
+the update is dropped. This paper leveraged SHS to determine
+the average AoI for two cases corresponding to whether the
+server is able or unable to harvest energy during service. If the
+server is unable to harvest energy while a packet is in service,
+it was shown that the average age satisﬁed
+Δ
+∗(B)
+=
+⎧
+⎪⎪
+⎨
+⎪⎪
+⎩
+2Bρ
+2 +( 2B +2 )ρ+ B +2
+μ[Bρ2 +( B +1 )ρ] β = ρ,
+(2ρ2 +2 ρ+1 )βB+2 − (2β2 +2 β+1 )ρB+2
+μ[(ρ2 + ρ)βB+2 − (β2 + β)ρB+2] β = ρ,
+(38)
+where β = η/μis the normalized energy arrival rate, ρ= λ/μ
+is the normalized packet arrival rate, μ is the service rate, and
+B is the battery capacity. Note the somewhat surprising result
+that the average age in this setting is invariant to exchanging β
+and ρ even though energy and packets are handled in different
+manners by the server.
+A subsequent study [87] extended this work to consider
+preemption in service under the assumption that the energy
+expended on an update in service is lost if the update is
+preempted. Preemption was shown to decrease average age
+only in energy-rich operating regimes, i.e., regimes in which
+the server typically has a full battery and energy lost to
+preempted packets is inconsequential. In energy-starved oper-
+ating regimes, preemption was shown to increase average
+age since preemption led a higher probability of battery
+depletion. Another study [98] extended these results to queues
+of arbitrary length, FCFS and LCFS queue disciplines, and
+nonlinear age penalty functions.
+VI. S
+AMPLING ,E STIMA TION AND CONTROL
+One method for reducing the AoI is to design a sampling
+policy that progressively determines when to generate update
+packets at the source. Consider the status update system
+illustrated in Fig. 9. A generate-at-will source decides when
+to sample a signal Xt. These samples are sent one-by-one
+to the monitor through a FCFS queue. Once a sample/update
+is delivered, an acknowledgement (ACK) is fed back to the
+sampler with no delay. By these ACKs, the sampler has access
+to the idle/busy state of the server in real-time.
+In the event of queueing, the sampled packets would need to
+wait in the queue for their transmission opportunity and would
+become stale during the waiting time. Hence, it is better to
+suspend sampling when the channel is busy, and reactivate
+it when the channel becomes idle. A reasonable sampling
+policy is the zero-wait policy introduced in Section III-B that
+submits a new sample once the previous sample is delivered.
+The zero-wait policy would appear to be quite good, as it
+simultaneously achieves the maximum throughput and the
+minimum delay: Because the server is busy at all time,
+the maximum possible throughput is achieved; meanwhile,
+since the waiting time in the queue is zero, the delay is equal to
+the mean service time, which is the minimum possible delay.
+Surprisingly, this zero-wait policy does not always mini-
+mize the AoI [30], [93]. Instead it can be better to wait before
+submitting an update. From an AoI perspective, the novelty of
+an update corresponds with how much it reduces the age at
+the monitor; when channel uses are a precious resource, they
+should not be wasted on updates that lack sufﬁcient novelty.
+Since this may be unclear, the reader is encouraged to study
+the sample path example in [30].
+In fact, the zero-wait sampling policy can be far from the
+optimum if (i) the goal is to minimize a nonlinear age function
+that grows quickly with respect to the AoI, and/or (ii) when
+the service times follow a heavy-tail distribution [30], [32].
+This highlights a key difference between data communication
+systems and status update systems: In data communication,
+all packets are equally important; however, in status updating,
+a sample packet is useful only if it carries fresh information
+to the monitor.
+Here we examine optimal sampling policies from age and
+estimation error perspectives. We start in Section VI-A with a
+study of sampling for AoI minimization. In Section VI-B, AoI
+minimization is then compared against sampling approaches
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 14 ---
+1196 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+Fig. 9. A status update system with a sampler and an estimator.
+that aim to minimize signal reconstruction error at the monitor.
+In these sections, π =( S1,S2,... ) represents a sampling
+policy where Si is the generation time of sample/update i,
+and Π denotes the set of causal samp ling policies. The service
+time of update i is Yi and the corresponding delivery time is
+Di = Si + Yi. (39)
+The {Yi} a r ea s s u m e dt ob ei . i . d .w i t h0 < E[Yi] < ∞ .T h e
+age at time t is
+Δ(t)=m i n{t − Si : Di ≤ t}. (40)
+In various settings, a sampling policy π will depend on a
+parameter such as β and the sampling and delivery times will
+be denoted Si(β) and Di(β) respectively.
+A. Sampling for AoI Minimization
+The optimal sampling problem for minimizing the
+time-average age penalty is formulated as
+¯popt =i n f
+π∈Π
+lim sup
+T→ ∞
+1
+T E
+
+ T
+0
+p(Δ(t))dt
+
+. (41)
+It has been shown [32] that if p(·) is non-decreasing then the
+sampling policy (S1(β),S2(β),... ) deﬁned by
+Si+1(β)=i n f{t ≥ Di(β): E[p(Δ(t + Yi+1))] ≥ β}, (42a)
+with threshold β satisfying
+E
+
+ Di+1(β)
+Di(β)
+p(Δ(t))dt
+
+= βE[Di+1(β) − Di(β)], (42b)
+is an optimal solution to (41). Further, β =¯popt.
+The optimal sampling policy in (42) has a nice structure.
+Speciﬁcally, sample i +1 is generated at the earliest time t
+satisfying two conditions:
+(i) t ≥ Di(β), i.e., sample i has already been delivered by
+time t,a n d
+(ii) the expected age penalty E [p(Δ(t + Yi+1))] has grown
+to be no smaller than the threshold β =¯popt.
+The optimal threshold β satisfying (42b) is unique [27] and can
+be calculated via bisection search, Newton’s method, or the
+following ﬁxed-point iteration method
+β
+k+1 =
+E
+ Di+1(βk)
+Di(βk) p(Δ(t))dt
+
+E
+
+Di+1(βk) − Di(βk)
+ . (43)
+Note that Newton’s method and the ﬁxed-point iteration (43)
+converge faster than bisection search [27], [118].
+Optimal sampling policies were also derived in other set-
+tings, including discrete-time sampling and sampling sub-
+ject to a maximum sampling rate constraint [32], two-way
+communication delay [118], as well as multi-source updates
+for minimizing the total time-average age [119] and total
+time-average of nonlinear age penalty functions [120].
+In [103], an age-optimal sampler design was obtained for
+an energy harvesting source with a ﬁnite battery size B and
+zero service time Yi =0 . If energy units arrive according
+to a Poisson process, the optimal sampler is given by a
+multi-threshold sampling policy
+S
+i+1(β)=i n f{t ≥ Si(β): p(Δ(t)) ≥ β(E(t))}, (44)
+where the threshold β(E(t)) is a decreasing function of the
+instant battery level E(t) ∈{ 0, 1,...,B }. Hence, samples
+are taken more frequently when the battery level is high, and
+less frequently when the battery level is low. Interestingly,
+the threshold β(B) associated with a full battery level E(t)=
+B equals the optimal objective value for this setting [103].
+B. Sampling and Remote Estimation
+The states of many cyberphysical systems, such as UA V
+mobility trajectory and sensor measurements, are in the form
+of a signal X
+t. A natural task in these systems is to recon-
+struct the signal Xt at the remote monitor, based on samples
+that are causally received from the source. This requires an
+extension of Nyquist sampling theory to causal sampling and
+reconstruction. In the non-causal case, periodic sampling can
+achieve perfect reconstruction of bandlimited signals with no
+error; however, a non-zero reconstruction error is inevitable
+in causal signal processing and the design goal should be
+to minimize the reconstruction error. The problem of causal
+sampling and reconstruction is called remote estimation in the
+control literature; see [121] for a recent survey.
+Recently, a connection between AoI and remote estimation
+was revealed in [27], [41]. To understand this connection,
+let ˆX
+t denote the MMSE estimate of Xt, based on the
+samples that have been delivered by time t, so that the signal
+reconstruction error is
+εX(t)= Xt − ˆXt. (45)
+Now consider the following optimal sampling problem for
+minimizing the mean-squared signal reconstruction error
+mseopt =i n f
+π∈Π
+lim sup
+T→ ∞
+1
+T E
+
+ T
+0
+|εX(t)|2 dt
+
+. (46)
+Problem (46) belongs to the class of continuous-time MDPs
+with continuous state space, which are usually quite challeng-
+ing to solve due to the curse of dimensionality. Nonetheless,
+an exact solution to (46) has been found for two Gauss-Markov
+signals: the Wiener process and the Ornstein-Uhlenbeck
+process, which is the continuous-time analogue of the
+ﬁrst-order autoregressive, i.e., AR(1), process.
+If X
+t is a Wiener process or an Ornstein-Uhlenbeck process,
+then (S1(β),S2(β),... ) is an optimal solution to (46), where
+[27], [41]
+Si+1(β)=i n f
+
+t ≥ Di(β):
+εX(t)
+ ≥ v(β)
+
+, (47a)
+with β satisfying
+E
+
+ Di+1(β)
+Di(β)
+|εX(t)|2 dt
+
+= βE[Di+1(β) − Di(β)]. (47b)
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 15 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1197
+For the Wiener process, v(β)=
+
+3(β − E[Yi]) is the thresh-
+old function; for the Ornstein-Uhlenbeck process, v(·) is given
+by [27, Equation (18)]. Further, β is exactly the optimal value
+to (46), i.e., β =
+ mseopt.
+The structure of the optimal sampling policy in (47) is
+similar to that in (42). Speciﬁcally, sample i +1 is generated
+at the earliest time t satisfying two conditions: (i) sample i
+has already been delivered by time t, i.e., t ≥ Di(β),a n d
+(ii) the instantaneous estimation error |εX(t)| is no smaller
+than a pre-determined threshold v(β),w h e r e β equals the
+optimum value of (46) and the function v(·) is determined
+by the signal and the service time distribution.
+One can add a maximum samp ling rate constraint in the
+optimal sampling problem (46); its solution appeared in [27],
+[41]. Recently, remote estima tion of a Wiener process with
+two-way random communication delay was studied in [122].
+In remote estimation systems, the optimal sampler is
+affected by the selected estimator; and conversely, the opti-
+mal estimator is also inﬂuen ced by the selected sampling
+policy. This “chicken and egg” dilemma can be resolved by
+jointly optimizing the sampler and estimator. In [123]–[127],
+tools from majorization theory were utilized to show that
+threshold-type samplers remain optimal in the joint sampling
+and estimation problem for several discrete-time remote esti-
+mation systems. It was also pointed out [123, p. 619] that
+similar results can be also established for continuous-time
+systems. Recently, it was shown that the sampling policy (47)
+and the MMSE estimator are indeed jointly optimal for the
+remote estimation of a class of continuous-time Markov sig-
+nals [128].
+13
+1) AoI and Signal-Agnostic Sampling: Next, we consider
+a variation of problem (46) that is tightly related to the
+AoI. We say a sampling policy π ∈ Π is signal-aware
+(signal-agnostic), if the sampling times Si are determined
+with (without) causal knowledge of the signal Xt. Hence,
+the Si are independent of the signal Xt in signal-agnostic
+sampling policies. Let Πagnostic ⊂ Π denote the set of
+signal-agnostic sampling policies. For every policy π ∈
+Πagnostic and time-homogeneous Markov chain Xt, there exists
+an increasing function p(Δ(t)) of the AoI such that
+E
+
+ T
+0
+|εX(t)|2 dt
+
+=E
+
+ T
+0
+p(Δ(t))dt
+
+. (48)
+By reducing the policy space Π to Πagnostic, (46) becomes the
+following signal-agnostic sampler design problem
+mseage-opt =i n f
+π∈Πagnostic
+lim sup
+T→ ∞
+1
+T E
+
+ T
+0
+|εX(t)|2 dt
+
+. (49)
+For signal-agnostic policies, it follows from (48) that (49) is
+an instance of problem (41). It was shown in [27], [41] that
+(S1(β),S2(β),... ) deﬁned by
+Si+1(β)=inf
+
+t ≥ Di(β): E
+
+|εX(t + Yi+1)|2
+≥ β
+
+, (50a)
+13This result was shown for a remote estimation system with zero service
+time, i.e., Yi =0 [128]. The treatment in [128] may also apply to the case
+of non-zero service time.
+with threshold β satisfying
+E
+
+ Di+1(β)
+Di(β)
+|εX(t)|2 dt
+
+= βE[Di+1(β)−Di(β)], (50b)
+is an optimal solution to (49). Further, β =
+ mseage-opt.
+Let us compare the optimal designs of signal-aware and
+signal-agnostic samplers: In the signal-aware sampling pol-
+icy (47), the sampling time is determined by the instantaneous
+estimation error |εX(t)|, and the threshold function v(·) varies
+with the signal model. In the signal-agnostic sampling policy
+(50), the sampling time is determined by the expected estima-
+tion error E
+
+|εX(t + Yi+1)|2
+at the delivery time t + Yi+1
+of the new sample. Hence, (50) requires that the expected
+estimation error upon the delivery of the new sample is no less
+than β. In both cases, β equals the optimal objective value.
+Age-based sampler design is of particular interest in
+discrete-time feedback control systems [28], [29]. According
+to [32, Theorem 3], the optimal signal-agnostic sampler for
+such discrete-time systems can be obtained by (i) requiring
+t in (50a) to be discrete, i.e., t ∈{ 0,T s, 2Ts,... },a n d
+(ii) changing the integral in (50b) to a sum over discrete
+time. These results are not limited to the queue model; in
+fact, the optimal signal-agnostic sampler for remote estimation
+over a packet erasure channel has a quite similar structure,
+as reported independently in [ 29]. The scheduling of channel
+resources among multiple feedback control loops for reducing
+state estimation error was considered in [129], [130]. When
+the AoI is high, it is difﬁcult to maintain a small control error.
+The optimal tradeoff between th e AoI and control performance
+was studied in [42].
+VII. W
+IRELESS NETWORKS
+In many applications, timely information is disseminated
+through wireless networks, where interference is one of the
+primary limitations to system performance. In this section,
+we start with an overview of recent contributions to AoI in
+wireless networks, followed in Section VII-B by works on
+updates over erasure channels that use ARQ/HARQ. Further
+in Section VII-C we discuss AoI results for conventional
+distributed multiaccess protoco ls. Section VII-D then reviews
+the main results from [131] on AoI optimization in broad-
+cast wireless networks, followed in Section VII-E by results
+from [132] on wireless networks under general interference
+constraints.
+A. Overview
+Over the past few years, there has been a growing body of
+work on AoI minimization in wireless settings. At the physical
+layer, updates through channels with bit erasures have been
+studied in [70], [113], [133]–[135]. The problem of scheduling
+ﬁnite number of update packets under physical interference
+constraint for age minimization was shown to be NP-hard
+in, e.g., [136], [137]. The impact of information freshness on
+collision avoidance in a network of UA Vs was studied in [138].
+Age for a wireless network where only a single link can be
+activated at any time was studied in, e.g., [139]–[143], and
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 16 ---
+1198 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+index policies were proposed. Threshold policies were proven
+to be optimal in, e.g., [114], [144].
+V arious works have considered decentralized access
+of a shared medium by nodes sending updates.
+In [14], [145]–[149] authors analyzed ALOHA and CSMA
+like random access. In [150] the authors showed asymptotic
+optimality of a decentralized r ound robin scheduling policy.
+In [151] the authors considered multiaccess in which a node
+chooses its access probability as a function of the age of
+its updates. In [152] a sleep-wake strategy is designed for
+a network of low-powered battery constrained nodes, which
+use carrier sensing based access.
+In [131], the authors addressed the problem of schedul-
+ing transmissions in broadcast wireless networks in order to
+minimize AoI. Age minimization with minimum throughput
+requirements was studied in, e.g., [153], [154]. Stochastic
+arrival processes were considered in [155]. In [132], [156],
+the authors considered the problem of optimizing AoI in
+wireless networks under general interference constraints. Sev-
+eral extensions have recently appeared, including the case of
+multi-source multi-hop wireless networks [157], [158], distrib-
+uted policies for age minimization [159], and age-based [160]
+and virtual-queue-based [161] policies for age minimization.
+Scaling of age as a function of the number of nodes in a large
+multi-hop wireless network has been studied [162]–[165].
+B. Updates Through Erasure Channels
+In [134] age is analyzed under different approaches to coded
+redundancy. While increasing redundancy improves the proba-
+bility that an update will be successfully delivered, it comes at
+the expense of longer update transmission times. The authors
+analyze ﬁnite redundancy (FR), wherein a k symbol update
+is transmitted as a ﬁxed number n of coded symbols, and
+inﬁnite incremental redundancy (IIR), wherein coded symbols
+are sent until k are successfully received. In [70] the HARQ
+protocols of FR and IIR are considered. The HARQ FR is
+different from FR in [134] in that it retransmits until an update
+is successfully transmitted. Further, a fresh update is generated
+at the beginning of a transmission, unlike [134] where updates
+arrive as a Poisson process. A new arrival must either preempt
+the currently transm itting update or be discarded; the latter is
+found to be the better strategy.
+In [135] ARQ and HARQ are analyzed for when an update
+is coded as n symbols for transmission. Fresh updates arrive to
+a FCFS queue as a Poisson process. The codeword length n
+that optimizes age is of interest. In [113], [114] ARQ and
+HARQ are studied with the goal of minimizing age when
+there is a constraint on the time-average of the number of
+transmissions at the source. Last but not the least, [133]
+compares HARQ and a transmit scheme that encodes an
+update into n symbols but transmits it only once. Random
+linear codes are assumed for forward error correction.
+C. Decentralized Multiaccess
+In a vehicular network setting where each vehicle sent
+updates using carrier sense based 802.11 medium access,
+different packet management strategies were simulated and
+a heuristic gradient-descent b ased algorithm was empirically
+shown to minimize the average age [14]. In [146], the authors
+compared ALOHA with scheduled access over unreliable
+channels. When all network nodes desired the same average
+age, it was shown that ALOHA led to age that was worse than
+scheduled access by a factor of 2e.
+In [145] nodes use CSMA to access the channel. The
+authors suitably approximate practical CSMA in developing
+a SHS model and the corresponding expression for average
+age. The age is optimized over the back-off rates of the nodes.
+They show that these rates are independent of the arrival rates
+of fresh updates at the nodes. In [149] it is shown that one
+can reduce average AoI by a factor of 2 in comparison to the
+minimum that can be achieved with typical slotted ALOHA.
+Nevertheless, the authors propose using ALOHA, but with
+large offered loads together w ith a load thinning mechanism
+that discards fresh packets that would lead to age reductions
+smaller than a threshold.
+All the above works consider slotted access, with [14]
+and [145] also assuming carrier sensing. Unlike these, [148]
+considers a network of transmit-only network of nodes. The
+setting is unslotted, precludes carrier sensing, and allows for
+channel error. Updates are assumed to arrive as a Poisson
+process and transmission times are exponentially distributed;
+SHS is used to derive the average AoI.
+In [141], [150] the authors consider policies that schedule
+transmissions in a network of nodes and provide packet man-
+agement at each node. The transmissions must be scheduled
+in a non-interfering manner. Also, it should be possible to
+implement the policies in a decen tralized manner. The authors
+show that the RR-ONE policy, which enforces a round robin
+schedule and only retains the latest packet at any node is
+asymptotically optimal (minim izes average age) among all
+policies. Speciﬁcally, it achieves an optimal asymptotic scaling
+factor (average age of a node normalized by the number of
+nodes) of 0.5. In comparison, the scaling factor of CSMA is
+shown to be at least 1. While asymptotically optimal, RR-ONE
+may not perform well with fewer nodes and low packet
+arrival rates.
+In [142], [143] the authors formulate age minimization as a
+restless multi-armed bandit problem. They derive the Whittle
+index and show that each source can calculate its own index
+independently of the others. In a centralized setup, access to
+indices of all nodes is available and the resulting index policy
+has near-optimal performance. They propose a decentralized
+scheme that has nodes access t he channel with probabilities
+that are a function of their index.
+In [151] a node doesn’t transmit if its age is smaller than a
+certain threshold. All nodes whose age exceeds the threshold
+access the medium with the same probability. The average
+age for the network is derived for such a policy and the
+same is optimized over the choices of threshold and access
+probability.
+Unlike all the above works on shared medium access, [152]
+considers a network of battery-constrained nodes. The goal is
+to design a sleep-wake strategy that minimizes the weighted
+average peak age while ensuring that the energy constraints
+are satisﬁed.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 17 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1199
+D. Broadcast Wireless Networks
+Consider a single-hop wireless network with N nodes
+sharing time-sensitive information through unreliable com-
+munication links to a base station (BS). Let the time be
+slotted, with slot duration normalized to unity and slot index
+t ∈{ 1, 2, ··· ,T },w h e r e T is the time-horizon of this
+discrete-time system. The broadcast wireless channel allows
+at most one packet transmission per slot. In each time-slot t,
+the BS either idles or schedules a transmission in a selected
+link i ∈{ 1, 2, ··· ,N }.L e t v
+i(t) ∈{ 0, 1} be the indicator
+function that is equal to 1 when the BS selects link i during slot
+t,a n d vi(t)=0 otherwise. When vi(t)=1 the corresponding
+source samples fresh information, generates a new packet and
+transmits this packet over link i. Notice that packets are not
+enqueued. Since the BS can select at most one link at any
+given slot t,w eh a v e
+N
+i=1
+vi(t) ≤ 1,t ∈{ 1,...,T }. (51)
+The transmission scheduling policy governs the sequence of
+decisions {vi(t)}N
+i=1 of the BS over time.
+Let ci(t) ∈{ 0, 1} represent the channel state associated
+with link i during slot t. When the channel is ON,w eh a v e
+ci(t)=1 , and when the channel is OFF,w eh a v e ci(t)=0 .
+The channel state process is assumed i.i.d. over time and
+independent across different links, with P(ci(t)=1 )=
+pi, ∀i, t.L e tdi(t) ∈{ 0, 1} be the indicator function that equals
+1 when the transmission in link i during slot t is successful;
+otherwise, di(t)=0 . A successful transmission occurs when
+a link is selected and the associ ated channel is ON, implying
+that di(t)= ci(t)vi(t), ∀i, t.
+In [131], the authors consider four low-complexity schedul-
+ing policies, namely Maximum Age First, Stationary Random-
+ized, Max-Weight and Whittle’s Index, and derive performance
+guarantees for each of them as a function of the network
+conﬁguration.
+• Maximum Age First (MAF) : In each slot t, select link i
+with highest age Δi(t), with ties broken arbitrarily.
+It was shown, using stochastic ordering arguments, that
+the MAF policy minimizes the average AoI under symmetric
+conditions ( pi = p ∈ (0, 1] and weights wi = w> 0 for
+all i.) Note that MAF leverages the knowledge of Δi(t),
+but disregards the values of wi and pi. However, when these
+parameters are not symmetric, MAF age performance can be
+arbitrarily poor.
+As an alternative to MAF, randomized scheduling policies
+use knowledge of w
+i and pi to achieve good performance in
+arbitrary settings. The randomized policy is based on a set of
+positive ﬁxed values of {β1,...,β N }.
+• Randomized: In each slot t, select link i with probability
+βi/ N
+j=1 βj .
+Although this simple policy uses no information from current
+or past states of the network, it was shown [131] that the
+Randomized policy with βi =
+
+wi/pi achieves 2-optimal
+performance in all network conﬁgurations (N,p i,wi).
+Next, we describe a Max-Weight policy that leverages
+knowledge of wi,p i and Δ (t)=[ Δ 1(t), ··· , ΔN (t)] in
+making scheduling decisions. Consider the linear Lyapunov
+function
+L(Δ (t)) = 1
+N
+N
+i=1
+˜αiΔi(t), (52)
+where ˜αi > 0 are auxiliary parameters for performance tuning.
+The Max-Weight policy is deﬁned to minimize the one-slot
+Lyapunov drift
+Φ(Δ (t)) = E[L(Δ (t +1 ) )− L(Δ (t))|Δ (t)]. (53)
+For the linear Lyapunov function (52), this speciﬁes the policy :
+• Max-W eight: In each slot t, select the link i with highest
+value of pi ˜αiΔi(t), with ties broken arbitrarily.
+Similar to the randomized policy, it was shown [131] that
+Max-Weight also achieves 2-optimal performance under all
+network conﬁgurations. However, in practice, the Max-Weight
+policy achieves much better average performance than the
+simple randomized policy, as shown through simulations.
+The choice of a linear Lyapunov function (52) with
+auxiliary parameters ˜α
+i resulted in a performance guaran-
+tee of 2-optimality. Choosing a different Lyapunov function
+yields a different Max-Weight policy with a different perfor-
+mance guarantee. For example , a quadratic Lyapunov function
+resulted in a performance guarantee of 4-optimality [131].
+Finally we consider the AoI minimization problem from a
+different perspective and propose an Index policy [166], also
+known as Whittle’s Index policy. This policy is surprisingly
+similar to the Max-Weight policy and also yields strong
+performance. Whittle’s Index policy is the optimal solution
+to a relaxation of the Restless Multi-Armed Bandit (RMAB)
+problem. This low-complexity heuristic policy has been exten-
+sively used in the literature [167]–[169] and is known to have a
+strong performance in a range of applications [170], [171]. The
+challenge associated with this approach is that the Index policy
+is only deﬁned for problems that are indexable, a condition
+which is often difﬁcult to establish. A detailed introduction
+to the relaxed RMAB problem can be found in [166], [172].
+It was shown [131] that the AoI minimization problem is
+indeed indexable with Whittle’s Index
+C
+i(Δi(t)) = wipi
+2 Δi(t)
+
+Δi(t)+ 2
+pi
+− 1
+
+. (54)
+This speciﬁes the policy :
+• Whittle Index: In each slot t, select the link i with highest
+value of Ci(Δi(t)), with ties being broken arbitrarily.
+Notice that the Whittle’s Index policy is similar to the
+Max-Weight policy despite being developed using entirely
+different approaches. Moreover, both are equivalent to the
+MAF policy when the network is symmetric, implying that
+both are AoI-optimal when w
+i = w and pi = p.I tw a ss h o w n
+in [131] that the Whittle index po licy is 8-optimal in the worst
+case. However, its strong performance is demonstrated through
+simulation.
+In Fig. 10, we compare the performance of the scheduling
+policies in terms of the Expected Weighted Sum Age of
+Information. The results show that the performances of the
+Max-Weight and Whittle Index policies are close to optimal
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 18 ---
+1200 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+Fig. 10. Network with T =1 0 0, 000,w i =1 ,p i = i/N. The simulation
+result for each policy and for each value of N is an average over 10 runs.
+and generally outperform Maximum Age First and Random-
+ized policies.
+E. General Wireless Networks
+In the previous section, we discussed scheduling policies
+for minimizing age in a broadcas t network. However, many of
+the applications in which age is an important metric involve
+wireless networks with more gene ral interference constraints.
+Here we examine the work [132] on scheduling policies to
+minimize peak and average age for a wireless network with
+time-varying links and general interference constraints.
+The wireless network consists of a set of source-destination
+pairs, each connected by a wireless link. Each source generates
+information updates that are to be sent to its destination. The
+wireless network is modeled as a graph G =( V,E ),w h e r eV
+is the set of nodes and E is the set of communication links.
+Each link e ∈ E is a source-destination pair in the network.
+Time is slotted with slot duration normalized to unity.
+Wireless interference constraints limit the set of links that
+can be activated simultaneously. We call a set m ⊂ E a
+feasible activation set if all links in m can be activated simulta-
+neously without interference, and denote by A the collection of
+all feasible activation sets. We call this the general interference
+model, as it incorporates several popular interference models
+such as 1-hop interference, k-hop interference, and protocol
+interference models.
+A non-interfering transmission over link e does not always
+succeed due to channel errors. We let c
+e(t) ∈{ 1, 0} denote
+the channel error process for link e,w h e r e ce(t)=1
+if a non-interfering transmission over link e succeeds and
+ce(t)=0 otherwise. We assume ce(t) to be independent
+across links, and i.i.d. across time, with known channel success
+probabilities γ
+e = P [ce(t)=1 ] > 0,f o ra l l e ∈ E.
+We ﬁrst consider active sources that can generate a new
+update packet at the beginning of each slot for transmission,
+while discarding old update packets that were not transmit-
+ted. Thus, for an active source, a transmitted packet always
+contains fresh information. In [132] the authors design ran-
+domized scheduling policies to minimize peak and average
+age. In the previous section, we saw a special case of a
+distributed randomized stationary policy in which a single link
+e was activated with probability p
+e > 0, independent across
+time slots.
+In the context of general interference, a randomized policy
+assigns a probability distribution x ∈ R|A| over the collection
+of feasible activation sets, A. Then, in each slot, activate the
+set m ∈A with probability xm, independent across time. For
+this policy, the activation frequency (probability) for link e is
+given by fe = 
+m:e∈m xm.
+It was shown [132] for any stationary randomized policy
+that the average and peak age both equal 
+e∈E we/(γefe).
+Thus, the age minimization problem can be written as
+Minimize
+x∈R|A|
+
+e∈E
+we
+γefe
+subject to 1T x ≤ 1, x ≥ 0. (55)
+Note that the optimization is over x, the activation probabilities
+of feasible activation sets m ∈A . This is because the link
+activation frequencies fe get completely determined by x.T h e
+problem (55) is a convex optimization problem in standard
+form [173]. The solution to it is a vector x ∈ R|A| that
+deﬁnes a probability distribution over link activation sets A,
+and determines a centralized st ationary policy that minimizes
+average and peak age over all randomized policies. It was also
+shown in [132] that this policy minimized peak age over all
+policies (not just randomized) and the average age for this
+policy is within a factor of 2 from the optimal average age
+over all policies.
+The optimization problem (55), although convex, has a
+variable space that is |A|-dimensional, and thus, its computa-
+tional complexity increases exponentially in |V | and |E|.I ti s ,
+however, possible to obtain the solution efﬁciently in certain
+speciﬁc cases. For example, under single-hop interference,
+where links interfere with one another if they share a node,
+every feasible activation set is a matching on G, and therefore,
+A is a collection of all matchings in G. As a result, the con-
+straint set in (55) is equal to the matching polytope [174]. The
+problem of ﬁnding an optimal schedule reduces to solving a
+convex optimization problem (55) over a matching polytope.
+This can be efﬁciently solved (i.e., in polynomial time) by
+using the Frank-Wolfe algorithm [175], and the separation
+oracle for matching polytope developed in [176].
+Next we discuss a number of interesting extensions.
+1) Buffered Sources: In some situations it is not possible
+for the source to generate packets on demand, and instead
+each source generates update packets at random. The generated
+packets get queued at the MAC layer FCFS queue for trans-
+mission. In this setting, the AoI minimization problem involves
+optimization of both the packet generation rate and the link
+activation frequencies. When the packets arrive according to an
+independent Bernoulli process, it was shown [132] that the AoI
+optimization problem can be decoupled; the link scheduling is
+done according to the same randomized policy that minimized
+AoI in the active source case, and the packet generation rate
+is given by the solution to a simple optimization problem.
+2) Channel State Information: In some situations, it is
+possible to observe the channel in advance, and decide when
+to transmit based on channel conditions. Typically, the channel
+is modeled as either being in either the “on” or “off” state,
+and a transmission is successful if it takes place when the
+channel is on. In [160] and [161] the authors consider the
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 19 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1201
+impact of CSI on the age minimization problem and propose
+age-based scheduling policies that take CSI into account.
+They show that using CSI can si gniﬁcantly improve average
+AoI. Another angle on the interplay between AoI and CSI,
+i.e., the age of channel state information, was considered
+in [177]–[179]. These studies recognized the importance of
+timely CSI in wireless networks and that CSI can be learned
+by direct channel estimation from a status update as well
+as indirectly through the contents of a status update. This
+work derived fundamental bounds and efﬁcient schedules to
+minimize the age of global CSI in wireless networks with
+reciprocal channels.
+3) Multi-Hop Networks: The multi-hop setting was ﬁrst
+studied in the context of vehicular networks where vehicles
+“piggyback” status updates over multiple hops [15]. The
+multi-hop setting is interesting in that it typically removes
+the abstraction of the queue and explicitly considers the
+effect of the network topology and link contention in the
+analysis. The analysis in [15] and the subsequent studies in
+[26], [55], [90], [180]–[182] considered age of information in
+speciﬁc multi-hop network structures, e.g., line, ring, and/or
+two-hop networks. In [183], sources are polled for updates
+by a gateway that aggregates the updates and sends them
+to a monitor. A general multi-hop network setting where a
+single-source disseminates status updates through a gateway
+to the network was considered in [52], [56]. Another general
+multi-hop setting in which each node is both a source and a
+monitor of information was considered in [158], [165], [184]–
+[186]. These studies led to the formulation of fundamental
+limits and schedules that were shown to achieve an average
+age close to these limits. A practical age control protocol
+to improve AoI in multi-hop IP networks was proposed in
+[187]. The distribution of AoI for general networks with
+time-invariant erasure probabilities on each link was derived
+in [188].
+VIII. A
+PPLICA TIONS
+In addition to queue/network focused analyses, AoI
+has also appeared in various application areas, including
+dissemination of channel state information [177]–[179], [189],
+timely updates via replicated servers [190], [191] including
+multi-casting networks [192]–[196], timely source coding
+[197]–[203], differential encoding of temporally correlated
+updates [204], correlated updates from multiple cameras [205],
+periodic updates from correlated IoT sources [206], mobile
+cloud gaming [207], [208], computation-intensive updating
+where updates are generated after processing raw data
+[209]–[211], game-theoretic approaches to network resource
+allocation for updating sources [212]–[223], and timely
+updating of researchers’ citations in Google Scholar [224].
+In the following sections, we describe contributions to AoI
+analysis related to various application areas, namely, game
+theory, learning, caching, and net work protocols. We note that
+these works focus on analysis of area-speciﬁc AoI metrics;
+the goodness of AoI as a performance metric is taken for
+granted. With respect to applications, much work needs to
+be done to determine when application users can perceive
+beneﬁts of reduced AoI. A notable start is [208], an empirical
+study of quality-of-experience (QoE) in mobile cloud gaming.
+This work found that frame age (the average age of the most
+recently received game video frame) is the most important
+QoS metric for predicting in-game performance and QoE.
+A. Age and Games
+Game theory has been applied in various settings where one
+or more players value timeliness [212]–[223]. This includes
+adversarial settings where one player aims to maintain the
+freshness of information updates while the other player aims
+to prevent this [212]–[215].
+In [212], the authors formulated a two-player game between
+a transmitter that aims to establish a connection to its receiver
+and an interferer that attempts to disrupt the connection. The
+players choose power levels as strategies and it is shown that
+both players have the same strategy at the Nash Equilibrium.
+It also shown that the Stackelberg strategy, when led by the
+interferer, dominates the Nash strategy.
+In [213], a dynamic game between a real-time monitoring
+system that cares about the timeliness of status updates sent
+over a wireless channel and an attacker that jams the channel
+to delay the status updates was considered. The authors proved
+the existence of a unique stationary equilibrium in the game
+and characterized the equilibrium analytically. They showed
+that the attacker chooses a jamming time distribution with
+high variance, while the system chooses a sampling policy that
+results in a low variance in th e time between the reception of
+two consecutive updates.
+In [214], authors modeled the interaction between a UA V
+transmitter and an adversarial interferer and showed that there
+exists a unique Nash equilibrium but multiple Stackelberg
+equilibria. In [215], the author s considered a communication
+scheduling and remote estimation problem in the presence of
+an adversary and obtained a Nash equilibrium for the non-
+zero-sum dynamic game.
+In [216], the authors formulated a two-player game to model
+the interaction between two transmitter-receiver pairs over an
+interference channel. The transmitters desire freshness of their
+updates at their receivers and can choose their transmit power
+levels. The Nash and Stackelberg strategies are derived and
+it is shown that the Stackelberg strategy dominates the Nash
+strategy.
+In [217]–[219] authors studied age in the context of spec-
+trum sharing between networks. A game-theoretic approach
+was proposed in [217] to study the coexistence of Dedicated
+Short Range Communication (DSRC) and WiFi; the DSRC
+network desires to minimize the average AoI and the WiFi
+network aims to maximize the average throughput. For the
+one-shot game, the Nash and Stackelberg equilibrium strate-
+gies were evaluated. The DSRC-WiFi coexistence problem
+from [217] was generalized in [218] to the coexistence of
+age and throughput optimizing networks. A repeated game
+approach was employed to capture the interaction of the
+networks over time. This line of work was further extended
+[219] to explore the possibility of cooperation between age and
+throughput optimizing networks using a randomized signaling
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 20 ---
+1202 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+device. It was shown that networks choose to cooperate only
+when they consist of a sufﬁciently small number of nodes, but
+otherwise they prefer to compete.
+In [220] and [221], authors studied the coexistence of
+nodes that value timeliness of their information at others and
+provided insights into how competing nodes would coexist.
+In [220], authors proposed a one-shot multiple access game
+with nodes as players, where each node shares the spectrum
+using a CSMA/CA based access mechanism. Authors investi-
+gated the equilibrium strategies of nodes in each CSMA/CA
+slot when collision slots are shor ter than successful transmis-
+sions, as well as when they are longer. They showed that when
+collisions are shorter, transmitting is a weakly dominant strat-
+egy. However, when collisions are longer, no weakly dominant
+strategy exists and a mixed strategy Nash equilibrium was
+derived. In [221], authors consid ered a distributed competition
+mode where each node wants to minimize a function of its
+age and transmission cost but information such as the number
+of nodes in the network and their strategies is not available.
+A learning strategy was proposed for each node to use its
+current empirical average of age and transmission cost to
+determine its transmit probability in each slot. They showed
+that for a certain set of parameters the proposed strategy
+converges to an equilibrium that is identiﬁed as the Nash
+equilibrium for a suitable virtual game.
+In [222], authors proposed a Stackelberg game between
+an access point and a set of helpers that contribute toward
+charging a sensor via wireless power transfer. The access point
+would like to minimize a utility that includes the AoI of the
+sensor, the power transferred by it to charge the sensor, and
+the payments it makes to the hel pers. The helpers beneﬁt from
+the payments but bear costs of transferring power. In [223],
+authors designed a mobile edge computing enabled 5G health
+monitoring system for wireless body area networks (WBANs)
+in the Internet of Medical Things (IoMT). The goal was to
+minimize system-wide costs that depend on medical criticality,
+AoI, and energy consumption of health monitoring pack-
+ets. The IoMT was divided into two sub-networks, namely,
+intra-WBANs and beyond-WBANs. For the intra-WBANs,
+the authors formulated a cooperative game to minimize the
+cost per patient. For the beyond-WBANs, where patients can
+choose to analyze the information either at local devices or at
+edge servers, the authors formulated a non-cooperative game
+and analyzed the Nash equilibrium.
+B. Age and Learning
+Data driven model-free learning techniques have been
+applied to optimizing age-of-information for different
+network assumptions and applications [113], [114], [147],
+[225]–[231]. In addition, age- based computational load
+balancing in machine learning applications with straggling
+servers has been studied in [232]. In [232], already aged
+parts of the computations are assigned to servers that are less
+likely to straggle in the next computation cycle.
+In [113], [114], [225]–[228], the goal is to learn policies
+that schedule updates from one or more sources with the
+goal of minimizing their ages at a monitor. Authors in [113],
+[114] aim to schedule updates of a source over an error-prone
+channel under different feedback mechanisms including ARQ
+and Hybrid ARQ. They also proposed an on-policy SARSA
+algorithm [233], with the policy modeled by a soft-max distri-
+bution, for when the channel error statistics are not known. The
+authors consider the case where a source may send updates
+to multiple users in [225]. In [226], the authors consider a
+network of devices whose updates are delivered to applications
+via an IoT hub. An application is updated at the end of a frame
+only if updates from all devices relevant to the application
+are scheduled for transmission during the frame. The authors
+use the options framework (hierarchical reinforcement learn-
+ing) [234] to model scheduling as composed of two policies:
+the ﬁrst chooses the application to be updated and the other
+chooses how devices corresponding to the application must be
+scheduled. A deep Q network based architecture is proposed
+to learn the scheduling policy.
+In [227], the authors consider a network of sensors sending
+their updates to a remote monitor. The network would like to
+optimize a weighted sum of the average AoI and the proba-
+bilities that the ages of sensors’ updates at the monitor exceed
+a predeﬁned threshold. The probabilities model reliability for
+ultra reliable low latency communication (URLLC) systems.
+The actor-critic [233] algorithm A3C is used to learn a policy
+that chooses the sensor that must send its update. In [228],
+the authors empirically compare the AoI achieved using the
+reinforcement learning algorithms of Deep Q-Learning and
+Policy Gradient for scheduling packets from multiple (four)
+ﬂows that arrive at a single queue single server facility. They
+also compare against the oft en analyzed maximum age ﬁrst
+scheduling policy.
+In [147] the authors consider a fully connected ad hoc
+network in which nodes send updates to each other. They use
+deep Q-learning in a multi-agent setting to learn the policy that
+every node must use. The policy chooses the transmit power
+for a node at every time slot.
+Works [229]–[231] learn trajectories of one or more
+Unmanned Aerial V ehicles (UA Vs) that collect information
+from sensors. In [229], mobile UA Vs plan trajectories to obtain
+updates from IoT devices that must be delivered to a ground
+station. The UA V trajectories must ensure that average AoI at
+the ground station is below a certain threshold. However, one
+would like to choose trajectories such that energy efﬁciency
+is maximized. In [230], deep reinforcement learning is used
+to ﬁnd an energy-constrained UA V trajectory (through the
+sensors and back to its base) that minimizes the weighted sum
+AoI of the sensor updates. In a similar but different problem
+formulation, the authors of [231] propose a deep reinforcement
+learning algorithm to optimize (i) the trajectory a UA V must
+take to obtain updates from sensors on the ground and (ii)
+the scheduling of updates at the sensors with the goal of
+minimizing the sum AoI at the UA V .
+C. Caching
+Gao et al. [235] were the ﬁrst to introduce the concept
+of cache freshness in opportunistic mobile networks. They
+assume a single data source updating multiple caching servers
+(nodes), wherein each caching node may further update other
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 21 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1203
+nodes. The authors in [236]–[238] use AoI together with
+the popularity of content for cache management. In [236],
+the authors design a popularity weighted AoI metric based
+update policy for updating a local cache connected to a remote
+server via a limited capacity link. The authors show that the
+update rate of content in the local cache should be proportional
+to the square root of its popularity. In [238] the authors
+propose an update policy that minimizes the average AoI
+of the ﬁles with respect to a given popularity distribution
+in a single-server single-cache system. The authors consider
+AoI-dependent update durations and compare their policy with
+the square root policy proposed in [236].
+In [237], the authors propose a caching model for requesting
+content based on the popularity (history of requests) and
+freshness (age), captured using effective age. They propose an
+optimal policy that minimizes the number of missed requests
+while managing the contents of the cache when the cache is
+full and new content arrives. In [239], the authors propose a
+cache-assisted lazy update and d elivery (CALUD) to jointly
+optimize content freshness and service latency in vehicular
+networks. They consider multiple data sources periodically
+updating a single roadside unit (RSU).
+In [240] the authors discuss the real-time performance of
+a cache enabled network with AoI as a freshness metric.
+They propose a random caching framework and show that
+it performs better than the most popular content based and
+uniform caching strategies with respect to minimizing the
+peak AoI. In [241] the authors consider AoI in serial and
+multi-access connected cache netwo rks, and analyze age at
+intermediate caches and the end-users. Extending [241], the
+authors in [242] consider the trade-off between obtaining a
+ﬁle from the source and obtaining it from the cache. While
+the former could entail larger ﬁle transmission times, albeit
+of the freshest copy, the latter may result in an older copy
+obtained quickly. They consider whether a ﬁle must be stored
+in the cache and if so then the rate at which it must be updated.
+In [243] the authors propose a freshness-aware refreshing
+scheme that minimizes the average service delay while guar-
+anteeing content freshness. Th e cached contents are refreshed
+on user requests if their AoI exceeds a certain threshold
+(refreshing window). A small wi ndow increases service delays
+as the latest version is fetched more often. On the other hand,
+a large window increases age but keeps service delays small
+as the cached version is sent to the user.
+In [244] the authors use Q-learning to achieve staleness
+control of machine learning models available at the edge for
+data analytics. They consider six different performance metrics
+including the AoI and the value of information updates.
+D. Protocols
+In [245] the authors measure the AoI at a remote server
+when using TCP/IP over a selection of access networks
+including WiFi, L TE, 2G/3G and Ethernet. Experiments are
+conducted for various application update rates, both in an
+emulated testbed and over the Internet. In [246], [247] authors
+analyzed AoI over real networks using different devices,
+protocols and networks (wired/wireless). The authors discuss
+the challenges associated in measuring AoI in real networks,
+including synchronization, selection of hardware, and choice
+of transport protocol and draw insights for AoI aware trans-
+mission protocols. In [187], [248], [249] the authors propose
+the Age Control Protocol, an end-to-end transport protocol that
+minimizes the AoI of the delivered update at the monitor in
+a network-transparent manner. The authors detail the proto-
+col algorithm and empirically demonstrate its efﬁcacy using
+real-world experiments that have one or more devices sending
+updates to a server in the cloud.
+IX. C
+ONCLUSION
+Age of information has emerged as an end-to-end perfor-
+mance metric for systems that employ status update messages.
+In this survey, we have seen that the concept of age is so
+general that age-based optimization problems can be found
+almost everywhere, arising in all network layers and in all
+system components that can be viewed as communicating via
+updates. A source can optimize the rate at which it submits
+updates or the source may adopt an age-optimizing update
+transmission policy. A service facility that processes updates
+can employ scheduling policies to maximize the timeliness
+of delivered updates. A base station can use age to schedule
+downlink transmissions to its users. On the uplink, users can
+use age-based policies to access the channel. These policies
+differ substantially from rate/throughput maximization, partic-
+ularly for energy harvesting sources. Moreover, in these net-
+work settings, age-based update policies are practical because
+senders, servers and routers understand packet time-stamps,
+as opposed to application-speciﬁc measurements.
+This AoI introduction has described the development of new
+analytical models for freshness and tools for age analysis.
+These new methods have been used to characterize age in
+relatively abstract models of sensors, networks, and service
+facilities. Some key ideas have emerged: The updating process
+should be matched to the system that is handling the updates,
+neither underloading nor overloading the system. The system
+should aim to process new updates rather than old. The system
+should avoid processing updates that lack sufﬁcient novelty.
+These observations suggest that the introduction of timeliness
+requirements results in systems that work smarter not harder.
+We also have seen that AoI metrics are beginning to be
+applied in abstract models of various application domains
+ranging from UA V trajectory guidance to mobile gaming.
+However, there remain many unanswered questions, open
+problems, and unexplored application areas.
+A promising area is edge cloud processing for low-latency
+edge-assisted applications. The system model is that the deliv-
+ery of an update requires (timely) computation in the cloud.
+In this setting, mechanisms like service preemption that were
+introduced here in the context of queues and communication
+links are in fact more applicable in the context of edge-cloud
+processing; killing a job on a processor is a lot simpler than
+killing a packet in a network.
+Often these edge-cloud computations will involve machine
+learning. The intersection of p redictive machine learning and
+AoI could become important. Using machine learning to
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 22 ---
+1204 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+solve scheduling problems for reduced AoI is an obvious
+opportunity; but using AoI to accelerate real-time learning
+algorithms through prioritization o f fresh data is also feasible.
+With respect to networking, an interesting open problem
+is how to enable “age-optimality” as a network service that
+caters to a host of cyberphysical system applications. In such
+a world, a CPS application (and the many sources and monitors
+that underpin its functionality) would open an “age-socket.”
+The network would then manage the end-to-end connections,
+including polling/sampling, and managing application queues.
+The networking stack of course performs some of these
+functions already, though not for timeliness.
+We have already seen that age is applicable to various
+estimation problems. It should be apparent that functions of
+AoI can play an important role in scheduling feedback for
+control systems. How this should be done yields problems at
+the intersection of sensors, processing, and communications,
+where there is a tradeoff between processing (e.g., compres-
+sion) and latency. More compression takes time and processing
+capacity, but can reduce communication latency.
+Age/distortion tradeoffs represent another aspect of these
+types of problems, For example, suppose one can get a low
+resolution image with small age or a higher resolution image
+with increased age. In what settings would one be preferable?
+For remote estimation and control, a (big) open question is
+how to design sampling, quantization, coding, and control for
+multi-dimensional signals th at could be correlated and non-
+Markovian. Of course, this will be related to age/distortion
+tradeoffs.
+In each of these potential problem areas, there are likely
+to be a host of abstract but informative problem formulations.
+The solutions will perhaps answer the question of when or
+whether AoI based problem formulations will become a useful
+practical mechanism for optimizing the design and operation
+of widely deployed cyberphysical systems.
+R
+EFERENCES
+[1] I. Parvez, A. Rahmati, I. Guvenc, A. I. Sarwat, and H. Dai, “A survey
+on low latency towards 5G: RAN, core network and caching solu-
+tions,” IEEE Commun. Surveys Tuts. , vol. 20, no. 4, pp. 3098–3130,
+May 2018.
+[2] P . Popovski et al. , “Wireless access in ultra-reliable low-latency
+communication (URLLC),” IEEE Trans. Commun. , vol. 67, no. 8,
+pp. 5783–5801, Aug. 2019.
+[3] J. Sachs et al. , “Adaptive 5G low-latency communication for tactile
+Internet services,” Proc. IEEE, vol. 107, no. 2, pp. 325–349, Sep. 2019.
+[4] S. Kaul, R. Y ates, and M. Gruteser, “Real-time status: How often should
+one update?” in Proc. IEEE INFOCOM , Mar. 2012, pp. 2731–2735.
+[5] X. Song and J. W. S. Liu, “Performance of multiversion concurrency
+control algorithms in maintaining temporal consistency,” in Proc. 14th
+Annu. Int. Comput. Softw. Appl. Conf. , 1990, pp. 132–139.
+[6] M. Xiong and K. Ramamritham, “Deriving deadlines and periods for
+real-time update transactions,” in Proc. 20th IEEE Real-Time Syst.
+Symp., Mar. 1999, pp. 32–43.
+[7] A. Karakasidis, P . V assiliadis, and E. Pitoura, “ETL queues for active
+data warehousing,” in Proc. 2nd Int. Workshop Inf. Qual. Inf. Syst.
+(IQIS), 2005, pp. 28–39.
+[8] S. Chen and K. Nahrstedt, “Distributed QoS routing with imprecise
+state information,” in Proc. 7th Int. Conf. Comput. Commun. Netw. ,
+1998, pp. 614–621.
+[9] H. Y u, L. Breslau, and S. Shenker, “A scalable Web cache consistency
+architecture,” ACM SIGCOMM Comput. Commun. Rev. , vol. 29, no. 4,
+pp. 163–174, Oct. 1999.
+[10] Y .-C. Hu and D. B. Johnson, “Ensuring cache freshness in on-demand
+ad hoc network routing protocols,” in Proc. 2nd ACM Int. Workshop
+Princ. Mobile Comput. (POMC) , 2002, pp. 25–30.
+[11] V . C. Giruka and M. Singhal, “He llo protocols for ad-hoc networks:
+Overhead and accuracy tradeoffs,” in Proc. 6th IEEE Int. Symp. World
+Wireless Mobile Multimedia Netw. , Jun. 2005, pp. 354–361.
+[12] J. Cho and H. Garcia-Molina, “Effective page refresh policies for Web
+crawlers,” ACM Trans. Database Syst. , vol. 28, no. 4, pp. 390–426,
+Dec. 2003.
+[13] S. Ioannidis, A. Chaintreau, and L. Massoulie, “Optimal and scalable
+distribution of content updates over a mobile social network,” in
+Proc. IEEE 28th Conf. Comput. Commun. (INFOCOM) , Apr. 2009,
+pp. 1422–1430
+[14] S. Kaul, M. Gruteser, V . Rai, and J. Kenney, “Minimizing age of infor-
+mation in vehicular networks,” in Proc. 8th Annu. IEEE Commun. Soc.
+Conf. Sensor , Mesh Ad Hoc Commun. Netw. , Jun. 2011, pp. 350–358.
+[15] S. Kaul, R. Y ates, and M. Gruteser, “On piggybacking in vehicular
+networks,” in Proc. IEEE Global Telecommun. Conf. (GLOBECOM) ,
+Dec. 2011, pp. 1–5.
+[16] S. M. Ross, Stochastic Processes, 2nd ed. Hoboken, NJ, USA: Wiley,
+1996.
+[17] R. G. Gallager, Stochastic Processes: Theory for Applications .
+Cambridge, U.K.: Cambridge Univ. Press, 2013.
+[18] M. Costa, M. Codreanu, and A. Ephremides, “On the age of informa-
+tion in status update systems with packet management,” IEEE Trans.
+Inf. Theory , vol. 62, no. 4, pp. 1897–1910, Apr. 2016.
+[19] M. Costa, M. Codreanu, and A. Ephremides, “Age of information with
+packet management,” in Proc. IEEE Int. Symp. Inf. Theory , Jun. 2014,
+pp. 1583–1587.
+[20] Y . Inoue, H. Masuyama, T. Takine, and T. Tanaka, “A general formula
+for the stationary distribution of the age of information and its
+application to single-server queues,” IEEE Trans. Inf. Theory
+, vol. 65,
+no. 12, pp. 8305–8324, Dec. 2019.
+[21] J. P . Hespanha, “Modelling and analysis of stochastic hybrid sys-
+tems,” IEE Proc. Control Theory Appl. , vol. 153, no. 5, pp. 520–535,
+Sep. 2006.
+[22] R. D. Y ates and S. K. Kaul, “The age of information: Real-time status
+updating by multiple sources,” IEEE Trans. Inf. Theory , vol. 65, no. 3,
+pp. 1807–1827, Mar. 2019.
+[23] D. V ermes, “Optimal dynamic control of a useful class of randomly
+jumping processes,” Int. Inst. Appl. Syst. Anal., Laxenburg, Austria,
+Tech. Rep. PP-80-015, 1980.
+[24] M. H. A. Davis, “Piecewise-deterministic Markov processes: A general
+class of non-diffusion stochastic models,” J. Roy. Statist. Soc. , vol. 46,
+pp. 353–388, Jul. 1984.
+[25] L. DeVille, S. Dhople, A. D. Domínguez-García, and J. Zhang,
+“Moment closure and ﬁnite-time blowup for piecewise determinis-
+tic Markov processes,” SIAM J. Appl. Dyn. Syst. , vol. 15, no. 1,
+pp. 526–556, Jan. 2016.
+[26] R. D. Y ates, “The age of information in networks: Moments, dis-
+tributions, and sampling,” IEEE Trans. Inf. Theory , vol. 66, no. 9,
+pp. 5712–5728, Sep. 2020.
+[27] T. Z. Ornee and Y . Sun, “Samp ling and remote estimation for the
+Ornstein-Uhlenbeck process thr ough queues: Age of information and
+beyond,” IEEE/ACM Trans. Netw., submitted for publication. [Online].
+Available: https://arxiv.org/abs/1902.03552
+[28] J. P . Champati, M. H. Mamduhi, K. H. Johansson, and J. Gross,
+“Performance characterization using AoI in a single-loop networked
+control system,” in Proc. IEEE Conf. Comput. Commun. Workshops
+(INFOCOM WKSHPS) , Apr. 2019, pp. 197–203.
+[29] M. Klugel, M. H. Mamduhi, S. Hirch e, and W. Kellerer, “AoI-penalty
+minimization for networked control systems with packet loss,” in Proc.
+IEEE Conf. Comput. Commun. Workshops (INFOCOM WKSHPS) ,
+Apr. 2019, pp. 189–196.
+[30] Y . Sun, E. Uysal-Biyikoglu, R. D. Y ates, C. E. Koksal, and
+N. B. Shroff, “Update or wait: How to keep your data fresh,” IEEE
+Trans. Inf. Theory , vol. 63, no. 11, pp. 7492–7508, Nov. 2017.
+[31] A. Kosta, N. Pappas, A. Ephremides, and V . Angelakis, “Age and value
+of information: Non-linear age case,” in Proc. IEEE Int. Symp. Inf.
+Theory (ISIT) , Jun. 2017, pp. 326–330.
+[32] Y . Sun and B. Cyr, “Sampling for data freshness optimization: Non-
+linear age functions,” J. Commun. Netw. , vol. 21, no. 3, pp. 204–219,
+Jun. 2019.
+[33] A. Kosta, N. Pappas, A. Ephremides, and V . Angelakis, “The cost of
+delay in status updates and their value: Non-linear ageing,” IEEE Trans.
+Commun., vol. 68, no. 8, pp. 4905–4918, Aug. 2020.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 23 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1205
+[34] C. Shapiro and H. V arian, Information Rules: A Strategic Guide to the
+Network Economy . Boston, MA, USA: Harvard Business Press, 1999.
+[35] A. Even and G. Shankaranarayanan, “Utility-driven assessment of data
+quality,” ACM SIGMIS Database, DATABASE Adv. Inf. Syst. , vol. 38,
+no. 2, pp. 75–93, May 2007.
+[36] B. Heinrich, M. Klier, and M. Kaiser, “A procedure to develop metrics
+for currency and its application in CRM,” J. Data Inf. Qual. ,v o l .1 ,
+no. 1, pp. 1–28, Jun. 2009.
+[37] E. Altman, R. El-Azouzi, D. S. Menasche, and Y . Xu, “Forever
+young: Aging control for smartphones in hybrid networks,” 2010,
+arXiv:1009.4733. [Online]. Available: http://arxiv.org/abs/1009.4733
+[38] S. Razniewski, “Optimizing update frequencies for decaying informa-
+tion,” in Proc. 25th ACM Int. Conf. Inf. Knowl. Manage. , Oct. 2016,
+pp. 1191–1200.
+[39] R. W. Heath, Jr., and K. T. Truong, “Effects of channel aging in massive
+MIMO systems,” J. Commun. Netw. , vol. 15, no. 4, pp. 338–351,
+Aug. 2013.
+[40] M. K. C. Shisher, H. Qin, L. Y ang, F. Y an, and Y . Sun, “The age of
+correlated features in supervised learning based forecasting,” in Proc.
+IEEE INFOCOM Age Inf. Workshops , Feb. 2021, pp. 1–9.
+[41] Y . Sun, Y . Polyanskiy, and E. Uysa l, “Sampling of the Wiener process
+for remote estimation over a channel with random delay,” IEEE Trans.
+Inf. Theory , vol. 66, no. 2, pp. 1118–1135, Feb. 2020.
+[42] T. Soleymani, J. S. Baras, and K. H. Johansson, “Stochastic control
+with stale information—Part I: Fully observable systems,” in Proc.
+IEEE 58th Conf. Decis. Control (CDC) , Dec. 2019, pp. 4178–4182.
+[43] Y . Sun and B. Cyr, “Information aging through queues: A mutual
+information perspective,” in Proc. IEEE 19th Int. Workshop Signal
+Process. Adv. Wireless Commun. (SPAWC) , Jun. 2018, pp. 1–5.
+[44] T. Cover and J. Thomas, Elements of Information Theory . Hoboken,
+NJ, USA: Wiley, 1991.
+[45] T. Soleymani, S. Hirche, and J. S. Baras, “Optimal self-driven sampling
+for estimation based on value of information,” in Proc. 13th Int.
+W orkshop Discrete Event Syst. (WODES) , May 2016, pp. 183–188.
+[46] T. Soleymani, S. Hirche, and J. S. Baras, “Maximization of information
+in energy-limited directed communication,” in Proc. Eur . Control Conf.
+(ECC), Jun. 2016, pp. 1001–1006.
+[47] T. Soleymani, S. Hirche, and J. S. Baras, “Optimal stationary self-
+triggered sampling for estimation,” in Proc. IEEE 55th Conf. Decis.
+Control (CDC), Dec. 2016, pp. 3084–3089.
+[48] A. M. Bedewy, Y . Sun, and N. B. Shroff, “Minimizing the age of
+information through queues,” IEEE Trans. Inf. Theory , vol. 65, no. 8,
+pp. 5215–5232, Aug. 2019.
+[49] M. Bastopcu and S. Ulukus, “Age of information with soft updates,” in
+Proc. 56th Annu. Allerton Conf. Commun., Control, Comput. (Allerton) ,
+Oct. 2018, pp. 378–385.
+[50] M. Bastopcu and S. Ulukus, “Mini mizing age of information with soft
+updates,” J. Commun. Netw. , vol. 21, no. 3, pp. 233–243, Jun. 2019.
+[51] M. Shaked and J. G. Shanthikumar, Stochastic Orders.N e wY o r k ,N Y ,
+USA: Springer, 2007.
+[52] A. M. Bedewy, Y . Sun, and N. B. Shroff, “The age of information
+in multihop networks,” IEEE/ACM Trans. Netw. , vol. 27, no. 3,
+pp. 1248–1257, Jun. 2019.
+[53] Y . Sun, E. Uysal-Biyikoglu, an d S. Kompella, “Age-optimal updates of
+multiple information ﬂows,” in Proc. IEEE Conf. Comput. Commun.
+Workshops (INFOCOM WKSHPS) , Apr. 2018, pp. 136–141.
+[54] A. Maatouk, Y . Sun, A. Ephremides, and M. Assaad, “Status updates
+with priorities: Lexicographic optimality,” in Proc. IEEE/IFIP WiOpt ,
+Jun. 2020, pp. 1–8.
+[55] A. M. Bedewy, Y . Sun, and N. B. Shroff, “Optimizing data fresh-
+ness, throughput, and delay in multi-server information-update sys-
+tems,” in Proc. IEEE Int. Symp. Info. Theory (ISIT) , Jul. 2016,
+pp. 2569–2574.
+[56] A. M. Bedewy, Y . Sun, and N. B. Shroff, “Age-optimal information
+updates in multihop networks,” in Proc. IEEE Int. Symp. Inf. Theory
+(ISIT), Jun. 2017, pp. 576–580.
+[57] J. P . Champati, H. Al-Zubaidy, and J. Gross, “Statistical guarantee
+optimization for age of information for the D/G/1 queue,” in Proc.
+IEEE Conf. Comput. Commun. Workshops (INFOCOM WKSHPS) ,
+Apr. 2018, pp. 130–135.
+[58] A. Soysal and S. Ulukus, “Age of information in G/G/1/1 systems,” in
+Proc. Asilomar Conf. , Nov. 2019, pp. 2022–2027.
+[59] A. Soysal and S. Ulukus, “Age of information in G/G/1/1 systems:
+Age expressions, bounds, special cases, and optimization,” May 2019,
+arXiv:1905.13743. [Online]. Available: http://arxiv.org/abs/1905.13743
+[60] B. Buyukates and S. Ulukus, “Age of information with Gilbert-Elliot
+servers and samplers,” in Proc. 54th Annu. Conf. Inf. Sci. Syst. (CISS) ,
+Mar. 2020, pp. 1–6.
+[61] C. Kam, S. Kompella, G. D. Nguyen, J. E. Wieselthier, and
+A. Ephremides, “Age of information with a packet deadline,” in Proc.
+IEEE Int. Symp. Inf. Theory (ISIT) , Jul. 2016, pp. 2564–2568.
+[62] B. Wang, S. Feng, and J. Y ang, “To s kip or to switch? Minimizing age
+of information under link capacity constraint,” in Proc. IEEE 19th Int.
+Workshop Signal Process. Adv. Wireless Commun. (SPAWC), Jun. 2018,
+pp. 1–5.
+[63] K. Chen and L. Huang, “Age-of-information in the presence of error,”
+in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jul. 2016, pp. 2579–2584.
+[64] L. Huang and L. P . Qian, “Age of information for transmissions over
+Markov channels,” in Proc. IEEE Global Commun. Conf. (GLOBE-
+COM), Dec. 2017, pp. 1–6.
+[65] S. K. Kaul, R. D. Y ates, and M. Gruteser, “Status updates through
+queues,” in Proc. 46th Annu. Conf. Inf. Sci. Syst. (CISS) , Mar. 2012,
+pp. 1–6.
+[66] R. D. Y ates and S. Kaul, “Real-time status updating: Multiple sources,”
+in Proc. IEEE Int. Symp. Inf. Theory , Jul. 2012, pp. 2666–2670.
+[67] L. Huang and E. Modiano, “Optimizing age-of-information in a multi-
+class queueing system,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) ,
+Jun. 2015, pp. 1681–1685.
+[68] E. Najm and E. Telatar, “Status updates in a multi-stream M/G/1/1
+preemptive queue,” in Proc. IEEE Conf. Comput. Commun. Workshops
+(INFOCOM WKSHPS) , Apr. 2018, pp. 124–129.
+[69] M. Moltafet, M. Leinonen, and M. Codreanu, “On the age of informa-
+tion in multi-source queueing models,” IEEE Trans. Commun., vol. 68,
+no. 8, pp. 5003–5017, Aug. 2020.
+[70] E. Najm, R. Y ates, and E. Soljani n, “Status updates through M/G/1/1
+queues with HARQ,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) ,
+Jun. 2017, pp. 131–135.
+[71] S. K. Kaul and R. D. Y ates, “Timely updates by multiple sources:
+The M/M/1 queue revisited,” in Proc. 54th Annu. Conf. Inf. Sci. Syst.
+(CISS), Mar. 2020, pp. 1–6.
+[72] E. Najm, R. Nasser, and E. Telatar, “Content based status updates,”
+IEEE Trans. Inf. Theory , vol. 66, no. 6, pp. 3846–3863, Jun. 2020.
+[73] S. K. Kaul and R. D. Y ates, “Age of information: Updates with
+priority,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2018,
+pp. 2644–2648.
+[74] A. Maatouk, M. Assaad, and A. Ephremides, “Age of information with
+prioritized streams: When to buffer preempted packets?” in Proc. IEEE
+Int. Symp. Info. Theory (ISIT) , Jul. 2019, pp. 325–329.
+[75] C. Kam, S. Kompella, and A. Ephremides, “Effect of message trans-
+mission diversity on status age,” in Proc. IEEE Int. Symp. Inf. Theory ,
+Jun. 2014, pp. 2411–2415.
+[76] C. Kam, S. Kompella, and A. Ephremides, “Age of information under
+random updates,” in Proc. IEEE Int. Symp. Inf. Theory , Jul. 2013,
+pp. 66–70.
+[77] C. Kam, S. Kompella, G. D. Nguyen, and A. Ephremides, “Effect of
+message transmission path diversity on status age,” IEEE Trans. Inf.
+Theory, vol. 62, no. 3, pp. 1360–1374, Mar. 2016.
+[78] R. D. Y ates, “Status updates thr ough networks of parallel servers,” in
+Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2018, pp. 2281–2285.
+[79] V . Tripathi and S. Moharir, “Age of information in multi-source
+systems,” in Proc. IEEE Global Commun. Conf. (GLOBECOM) ,
+Dec. 2017, pp. 1–6.
+[80] B. Hajek and P . Seri, “Lex-optimal online multiclass scheduling
+with hard deadlines,” Math. Oper . Res. , vol. 30, no. 3, pp. 562–596,
+Aug. 2005.
+[81] X. Wu, J. Y ang, and J. Wu, “Optimal status update for age
+of information minimization with an energy harvesting source,”
+IEEE Trans. Green Commun. Netw. , vol. 2, no. 1, pp. 193–204,
+Mar. 2018.
+[82] A. Arafa, J. Y ang, S. Ulukus, and H. V . Poor, “Age-minimal trans-
+mission for energy harvesting sensors with ﬁnite batteries: Online
+policies,” IEEE Trans. Inf. Theory , vol. 66, no. 1, pp. 534–556,
+Jan. 2020.
+[83] S. Feng and J. Y ang, “Age of information minimization for
+an energy harvesting source with updating erasures: With and
+without feedback,” 2019, arXiv:1808.05141. [Online]. Available:
+https://arxiv.org/abs/1808.05141
+[84] A. Arafa, J. Y ang, S. Ulukus, and H. V . Poor, “Online timely status
+updates with erasures for energy harvesting sensors,” in Proc. 56th
+Annu. Allerton Conf. Commun., Control, Comput. (Allerton) , Oct. 2018,
+pp. 966–972.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 24 ---
+1206 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+[85] A. Arafa, J. Y ang, S. Ulukus, and H. V . Poor, “Using erasure feedback
+for online timely updating with an energy harvesting sensor,” in Proc.
+IEEE Int. Symp. Inf. Theory (ISIT) , Jul. 2019, pp. 607–611.
+[86] S. Farazi, A. G. Klein, and D. R. Brown, “Average age of information
+for status update systems with an energy harvesting server,” in Proc.
+IEEE Conf. Comput. Commun. Workshops (INFOCOM WKSHPS) ,
+Apr. 2018, pp. 112–117.
+[87] S. Farazi, A. G. Klein, and D. R. Brown, “Age of information in energy
+harvesting status update systems: When to preempt in service?” in Proc.
+IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2018, pp. 2436–2440.
+[88] B. T. Bacinoglu, E. T. Ceran, and E. Uysal-Biyikoglu, “Age of infor-
+mation under energy replenishment constraints,” in Proc. Inf. Theory
+Appl. Workshop (ITA) , Feb. 2015, pp. 25–31.
+[89] W. Liu, X. Zhou, S. Durrani, H. Mehrpouyan, and S. D. Blostein,
+“Energy harvesting wireless sensor networks: Delay analysis consid-
+ering energy costs of sensing and transmission,” IEEE Trans. Wireless
+Commun., vol. 15, no. 7, pp. 4635–4650, Jul. 2016.
+[90] A. Arafa and S. Ulukus, “Age-minimal transmission in energy har-
+vesting two-hop networks,” in Proc. IEEE Global Commun. Conf.
+(GLOBECOM), Dec. 2017, pp. 1–6.
+[91] A. Arafa and S. Ulukus, “Age minimization in energy harvesting
+communications: Energy-controlled delays,” in Proc. 51st Asilomar
+Conf. Signals, Syst., Comput. , Oct. 2017, pp. 1801–1805.
+[92] B. T. Bacinoglu and E. Uysal-Biyi koglu, “Scheduling status updates
+to minimize age of information with an energy harvesting sensor,” in
+Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2017, pp. 1122–1126.
+[93] R. D. Y ates, “Lazy is timely: Status updates by an energy harvesting
+source,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2015,
+pp. 3008–3012.
+[94] A. Arafa and S. Ulukus, “Timely updates in energy harvesting two-hop
+networks: Ofﬂine and online policies,” IEEE Trans. Wireless Commun.,
+vol. 18, no. 8, pp. 4017–4030, Aug. 2019.
+[95] S. Feng and J. Y ang, “Optimal status updating for an energy harvesting
+sensor with a noisy channel,” in Proc. IEEE Conf. Comput. Commun.
+Workshops (INFOCOM WKSHPS) , Apr. 2018, pp. 348–353.
+[96] S. Feng and J. Y ang, “Minimizing age of information for an energy
+harvesting source with updating failures,” in Proc. IEEE Int. Symp. Inf.
+Theory (ISIT) , Jun. 2018, pp. 2431–2435.
+[97] A. Baknina and S. Ulukus, “C oded status updates in an energy
+harvesting erasure channel,” in Proc. 52nd Annu. Conf. Inf. Sci. Syst.
+(CISS), Mar. 2018, pp. 1–6.
+[98] X. Zheng, S. Zhou, Z. Jiang, and Z. Niu, “Closed-form analysis
+of non-linear age of information i n status updates with an energy
+harvesting transmitter,” IEEE Trans. Wireless Commun. , vol. 18, no. 8,
+pp. 4129–4142, Aug. 2019.
+[99] A. Baknina, O. Ozel, J. Y ang, S. Ulukus, and A. Y ener, “Sending
+information through status updates,” in Proc. IEEE Int. Symp. Inf.
+Theory (ISIT) , Jun. 2018, pp. 2271–2275.
+[100] A. Arafa, J. Y ang, and S. Ulukus, “Age-minimal online policies for
+energy harvesting sensors with random battery recharges,” in Proc.
+IEEE Int. Conf. Commun. (ICC) , May 2018, pp. 1–6.
+[101] A. Arafa, J. Y ang, S. Ulukus, and H. V . Poor, “Age-minimal online poli-
+cies for energy harvesting sensors with incremental battery recharges,”
+in Proc. Inf. Theory Appl. Workshop (ITA) , Feb. 2018, pp. 1–10.
+[102] B. T. Bacinoglu, Y . Sun, E. Uysal-Bivikoglu, and V . Mutlu, “Achieving
+the age-energy tradeoff with a ﬁnite-battery energy harvesting source,”
+in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2018, pp. 876–880.
+[103] B. T. Bacinoglu, Y . Sun, E. Uysal, and V . Mutlu, “Optimal status
+updating with a ﬁnite-battery energy harvesting source,” J. Commun.
+Netw., vol. 21, no. 3, pp. 280–294, Jun. 2019.
+[104] Z. Chen, N. Pappas, E. Bjornson, and E. G. Larsson, “Age of infor-
+mation in a multiple access channel with heterogeneous trafﬁc and
+an energy harvesting node,” in Proc. IEEE Conf. Comput. Commun.
+Workshops (INFOCOM WKSHPS) , Apr. 2019, pp. 662–667.
+[105] G. Stamatakis, N. Pappas, and A. Traganitis, “Control of sta-
+tus updates for energy harvesting devices that monitor processes
+with alarms,” 2019, arXiv:1907.03826. [Online]. Available: https://
+arxiv.org/abs/1907.03826
+[106] P . Raﬁee and O. Ozel, “Active st atus update packet drop control in an
+energy harvesting node,” 2019, arXiv:1911.01407. [Online]. Available:
+https://arxiv.org/abs/1911.01407
+[107] O. Ozel, “Timely status updating through intermittent sensing and
+transmission,” 2020, arXiv:2001.01122. [Online]. Available: https://
+arxiv.org/abs/2001.01122
+[108] Y . Dong, P . Fan, and K. B. Letaief, “Energy harvesting powered
+sensing in IoT: Timeliness versus distortion,” 2019, arXiv:1912.12427.
+[Online]. Available: https://arxiv.org/abs/1912.12427
+[109] I. Krikidis, “Average age of info rmation in wireless powered sensor
+networks,” IEEE Wireless Commun. Lett. , vol. 8, no. 2, pp. 628–631,
+Apr. 2019.
+[110] C. Tunc and S. Panwar, “Optimal tr ansmission policies for energy har-
+vesting age of information systems with battery recovery,” in Proc. 53rd
+Asilomar Conf. Signals, Syst., Comput. , Nov. 2019, pp. 2012–2016.
+[111] S. Leng and A. Y ener, “Age of information minimization for an energy
+harvesting cognitive radio,” IEEE Trans. Cognit. Commun. Netw. ,
+vol. 5, no. 2, pp. 427–439, Jun. 2019.
+[112] Y . Gu, H. Chen, Y . Zhou, Y . Li, and B. Vucetic, “Timely status update
+in Internet of Things monitoring systems: An age-energy tradeoff,”
+IEEE Internet Things J. , vol. 6, no. 3, pp. 5324–5335, Jun. 2019.
+[113] E. T. Ceran, D. Gunduz, and A. Gyorgy, “Average age of information
+with hybrid ARQ under a resource constraint,” in Proc. IEEE Wireless
+Commun. Netw. Conf. (WCNC) , Apr. 2018, pp. 1–6.
+[114] E. T. Ceran, D. Gündüz, and A. Gyorgy, “Average age of information
+with hybrid ARQ under a resource constraint,” IEEE Trans. Wireless
+Commun., vol. 18, no. 3, pp. 1900–1913, Mar. 2019.
+[115] M. A. Abd-Elmagid and H. S. Dhillon, “Average peak age-of-
+information minimization in UA V -assisted IoT networks,”IEEE Trans.
+V eh. Technol., vol. 68, no. 2, pp. 2003–2008, Feb. 2019.
+[116] C. Hu and Y . Dong, “Age of information of two-way data exchanging
+systems with power-splitting,” J. Commun. Netw. , vol. 21, no. 3,
+pp. 295–306, Jun. 2019.
+[117] E. Gindullina, L. Badia, and D. Gündüz, “Age-of-Information with
+information source diversity in an energy harvesting system,” 2020,
+arXiv:2004.11135. [Online]. Available: http://arxiv.org/abs/2004.11135
+[118] C.-H. Tsai and C.-C. Wang, “Age-of-information revisited: Two-way
+delay and distribution-oblivious online algorithm,” in Proc. IEEE Int.
+Symp. Inf. Theory (ISIT) , Jun. 2020, pp. 1782–1787.
+[119] A. M. Bedewy, Y . Sun, S. Kompella, and N. B. Shroff, “Age-optimal
+sampling and transmission scheduling in multi-source systems,” in
+Proc. 20th ACM Int. Symp. Mobile Ad Hoc Netw. Comput. , Jul. 2019,
+pp. 121–130.
+[120] A. M. Bedewy, Y . Sun, S. Kompella, and N. B. Shroff, “Opti-
+mal sampling and scheduling for timely status updates in multi-
+source networks,” 2020, arXiv:2001.09863. [Online]. Available:
+http://arxiv.org/abs/2001.09863
+[121] V . Jog, R. J. La, and N. C. Martins, “Channels, learning, queueing and
+remote estimation systems with a utilization-dependent component,”
+CoRR, vol. abs/1905.04362, pp. 1–22, May 2019.
+[122] C.-H. Tsai and C.-C. Wang, “Unifying AoI minimization and remote
+estimation—Optimal sensor/controller coordination with random two-
+way delay,” in Proc. IEEE INFOCOM , Jul. 2020, pp. 466–475.
+[123] B. Hajek, K. Mitzel, and S. Y ang, “P aging and registration in cellular
+networks: Jointly optimal policies and an iterative algorithm,” IEEE
+Trans. Inf. Theory , vol. 54, no. 2, pp. 608–622, Feb. 2008.
+[124] G. M. Lipsa and N. C. Martins, “Remote state estimation with
+communication costs for ﬁrst-order LTI systems,” IEEE Trans. Autom.
+Control, vol. 56, no. 9, pp. 2013–2025, Sep. 2011.
+[125] A. Nayyar, T. Basar, D. Teneketzis, and V . V . V eeravalli, “Optimal
+strategies for communication and remote estimation with an energy
+harvesting sensor,” IEEE Trans. Autom. Control , vol. 58, no. 9,
+pp. 2246–2260, Sep. 2013.
+[126] X. Gao, E. Akyol, and T. Ba¸ sar, “Optimal communication scheduling
+and remote estimation over an additive noise channel,” Automatica,
+vol. 88, pp. 57–69, Feb. 2018.
+[127] J. Chakravorty and A. Mahajan, “R emote estimation over a packet-drop
+channel with Markovian state,” IEEE Trans. Autom. Control , vol. 65,
+no. 5, pp. 2016–2031, May 2020.
+[128] N. Guo and V . Kostina, “Optimal cau sal rate-constrained sampling for
+a class of continuous Markov processes,” in Proc. IEEE Int. Symp. Inf.
+Theory (ISIT) , Jun. 2020, pp. 2456–2461.
+[129] O. Ayan, M. Vilgelm, M. Klügel, S. Hirche, and W. Kellerer, “Age-of-
+information vs. value-of-information scheduling for cellular networked
+control systems,” in Proc. 10th ACM/IEEE Int. Conf. Cyber-Phys. Syst. ,
+Apr. 2019, p. 109.
+[130] O. Ayan, M. Vilgelm, and W. Kellerer, “Optimal scheduling for
+discounted age penalty minimization in multi-loop networked control,”
+in Proc. IEEE 17th Annu. Consum. Commun. Netw. Conf. (CCNC) ,
+Jan. 2020, pp. 1–7.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 25 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1207
+[131] I. Kadota, A. Sinha, E. Uysal-B iyikoglu, R. Singh, and E. Modiano,
+“Scheduling policies for minimi zing age of information in broad-
+cast wireless networks,” IEEE/ACM Trans. Netw. , vol. 26, no. 6,
+pp. 2637–2650, Dec. 2018.
+[132] R. Talak, S. Karaman, and E. Modia no, “Optimizing information fresh-
+ness in wireless networks under gener al interference constraints,” in
+Proc. 18th ACM Int. Symp. Mobile Ad Hoc Netw. Comput. , Jun. 2018,
+pp. 15–28.
+[133] P . Parag, A. Taghavi, and J.-F. Chamberland, “On real-time status
+updates over symbol erasure channels,” in Proc. IEEE Wireless Com-
+mun. Netw. Conf. (WCNC) , Mar. 2017, pp. 1–6.
+[134] R. D. Y ates, E. Najm, E. Soljanin, and J. Zhong, “Timely updates
+over an erasure channel,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) ,
+Jun. 2017, pp. 316–320.
+[135] H. Sac, T. Bacinoglu, E. Uysal-Biyi koglu, and G. Durisi, “Age-optimal
+channel coding blocklength for an M/G/1 queue with HARQ,” in
+Proc. IEEE 19th Int. Workshop Signal Process. Adv. Wireless Commun.
+(SPAWC), Jun. 2018, pp. 486–490.
+[136] Q. He, D. Y uan, and A. Ephremides, “Optimizing freshness of infor-
+mation: On minimum age link scheduling in wireless systems,” in
+Proc. 14th Int. Symp. Modeling Optim. Mobile, Ad Hoc, Wireless Netw.
+(WiOpt), May 2016, pp. 1–8.
+[137] Q. He, D. Y uan, and A. Ephremides, “Optimal link scheduling for age
+minimization in wireless systems,” IEEE Trans. Inf. Theory , vol. 64,
+no. 7, pp. 5381–5394, Jul. 2018.
+[138] R. Talak, S. Karaman, and E. Modiano, “Speed limits in autonomous
+vehicular networks due to communication constraints,” in Proc. IEEE
+55th Conf. Decis. Control (CDC) , Dec. 2016, pp. 4998–5003.
+[139] I. Kadota, E. Uysal-Biyikoglu, R. Singh, and E. Modiano, “Minimizing
+the age of information in broadcast wireless networks,” in Proc. 54th
+Annu. Allerton Conf. Commun., Control, Comput. (Allerton) , Sep. 2016,
+pp. 844–851.
+[140] Y .-P . Hsu, E. Modiano, and L. Dua n, “Age of information: Design and
+analysis of optimal scheduling algorithms,” in Proc. IEEE Int. Symp.
+Inf. Theory (ISIT) , Jun. 2017, pp. 1–5.
+[141] Z. Jiang, B. Krishnamachari, S. Zhou, and Z. Niu, “Decentralized status
+update for age-of-information optim ization in wireless multiaccess
+channels,” in Proc. Inf. Theory Appl. Workshop (ITA) , Feb. 2018,
+pp. 2276–2280.
+[142] Z. Jiang, B. Krishnamachari, S. Zhou, and Z. Niu, “Can decentralized
+status update achieve universally near -optimal age-of-information in
+wireless multiaccess channels?” in Proc. 30th Int. Teletrafﬁc Congr .
+(ITC), vol. 1, Sep. 2018, pp. 144–152.
+[143] J. Sun, Z. Jiang, B. Krishnamachari, S. Zhou, and Z. Niu, “Closed-
+form Whittle’s index-enabled random access for timely status update,”
+IEEE Trans. Commun. , vol. 68, no. 3, pp. 1538–1551, Mar. 2020.
+[144] B. Zhou and W. Saad, “Optimal sampling and updating for minimizing
+age of information in the Internet of Things,” in Proc. IEEE Global
+Commun. Conf. (GLOBECOM) , Dec. 2018, pp. 1–6.
+[145] A. Maatouk, M. Assaad, and A. Ephremides, “On the age of informa-
+tion in a CSMA environment,” IEEE/ACM Trans. Netw., vol. 28, no. 2,
+pp. 818–831, Apr. 2020.
+[146] R. D. Y ates and S. K. Kaul, “Status updates over unreliable multiaccess
+channels,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2017,
+pp. 331–335.
+[147] S. Leng and A. Y ener, “Age of information minimization for wireless
+ad hoc networks: A deep reinfor cement learning approach,” in Proc.
+IEEE Global Commun. Conf. (GLOBECOM) , Dec. 2019, pp. 1–6.
+[148] R. D. Y ates and S. K. Kaul, “Ag e of information in uncoordinated
+unslotted updating,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT)
+,
+Jun. 2020, pp. 1759–1764.
+[149] X. Chen, K. Gatsis, H. Hassani, and S. S. Bidokhti, “Age of informa-
+tion in random access channels,” 2019, arXiv:1912.01473. [Online].
+Available: http://arxiv.org/abs/1912.01473
+[150] Z. Jiang, B. Krishnamachari, X. Zheng, S. Zhou, and Z. Niu, “Timely
+status update in wireless uplinks: Analytical solutions with asymptotic
+optimality,” IEEE Internet Things J. , vol. 6, no. 2, pp. 3885–3898,
+Apr. 2019.
+[151] H. Chen, Y . Gu, and S.-C. Liew, “Age-of-information dependent ran-
+dom access for massive IoT networks,” Jan. 2020, arXiv:2001.04780.
+[Online]. Available: http://arxiv.org/abs/2001.04780
+[152] A. M. Bedewy, Y . Sun, R. Singh, and N. B. Shroff, “Optimizing
+information freshness using low-power status updates via sleep-wake
+scheduling,” in Proc. 21st Int. Symp. Theory, Algorithmic F ound.,
+Protocol Design Mobile Netw. Mobile Comput. , Oct. 2020, pp. 51–60.
+[153] N. Lu, B. Ji, and B. Li, “Age-based scheduling: Improving data
+freshness for wireless real-time trafﬁc,” in Proc. 18th ACM Int. Symp.
+Mobile Ad Hoc Netw. Comput. , Jun. 2018, pp. 191–200.
+[154] I. Kadota, A. Sinha, and E. Modia no, “Optimizing age of information
+in wireless networks with throughput constraints,” in Proc. IEEE Conf.
+Comput. Commun. (INFOCOM) , Apr. 2018, pp. 1844–1852.
+[155] I. Kadota and E. Modiano, “Minimizing the age of information in
+wireless networks with stochastic arrivals,” in Proc. 20th ACM Int.
+Symp. Mobile Ad Hoc Netw. Comput. , Jul. 2019, pp. 221–230.
+[156] C. Joo and A. Eryilmaz, “Wireless scheduling for information fresh-
+ness and synchrony: Drift-based design and heavy-trafﬁc analy-
+sis,” IEEE/ACM Trans. Netw. , vol. 26, no. 6, pp. 2556–2568,
+Dec. 2018.
+[157] R. Talak, S. Karaman, and E . Modiano, “Minimizing age-of-
+information in multi-hop wireless networks,” in Proc. 55th Annu.
+Allerton Conf. Commun., Control, Comput. (Allerton) , Oct. 2017,
+pp. 486–493.
+[158] S. Farazi, A. G. Klein, J. A. McNeill, and D. R. Brown, “On the
+age of information in multi-sour ce multi-hop wireless status update
+networks,” in Proc. IEEE 19th Int. Workshop Signal Process. Adv.
+Wireless Commun. (SPAWC), Jun. 2018, pp. 1–5.
+[159] R. Talak, S. Karaman, and E. M odiano, “Distributed schedul-
+ing algorithms for optimizing information freshness in wire-
+less networks,” 2018, arXiv:1803.06469. [Online]. Available: http:
+//arxiv.org/abs/1803.06469
+[160] R. Talak, S. Karaman, and E. Modia no, “Optimizing age of information
+in wireless networks with perfect channel state information,” in Proc.
+16th Int. Symp. Model. Optim. Mobile, Ad Hoc, Wireless Netw. (WiOpt) ,
+May 2018, pp. 1–8.
+[161] R. Talak, I. Kadota, S. Karama n, and E. Modiano, “Scheduling
+policies for age minimization in wireless networks with unknown
+channel state,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2018,
+pp. 2564–2568.
+[162] B. Buyukates, A. Soysal, and S. Ulukus, “Age of information scaling in
+l a r g en e t w o r k s , ”i nProc. IEEE Int. Conf. Commun. (ICC) , May 2019,
+pp. 1–6.
+[163] B. Buyukates, A. Soysal, and S. Ulukus, “Age of information scaling
+in large networks with hierarchical cooperation,” in Proc. IEEE Global
+Commun. Conf. (GLOBECOM) , Dec. 2019, pp. 1–6.
+[164] B. Buyukates, A. Soysal, and S. Ulukus, “Scaling laws for age of
+information in wireless networks,” IEEE Trans. Wireless Commun. ,
+early access, Dec. 9, 2020, doi: 10.1109/TWC.2020.3042169.
+[165] S. Farazi, A. G. Klein, and D. R. Brown, “Fundamental bounds on
+the age of information in multi-hop global status update networks,”
+J. Commun. Netw. , vol. 21, no. 3, pp. 268–279, Jun. 2019.
+[166] P . Whittle, “Restless bandits: Activity allocation in a changing world,”
+J. Appl. Probab. , vol. 25, pp. 287–298, Jan. 1988.
+[167] R. Singh, X. Guo, and P . R. Kumar, “Index policies for optimal mean-
+variance trade-off of inter-delivery times in real-time sensor networks,”
+in Proc. IEEE Conf. Comput. Commun. (INFOCOM) , Apr. 2015,
+pp. 505–512.
+[168] V . Raghunathan, V . Borkar, M. Cao, and P . R. Kumar, “Index policies
+for real-time multicast scheduling for wireless broadcast systems,” in
+Proc. IEEE 27th Conf. Comput. Commun. (INFOCOM) , Apr. 2008,
+pp. 1570–1578.
+[169] P . Mansourifard, T. Javidi, and B. Krishnamachari, “Optimality of
+myopic policy for a class of monotone afﬁne restless multi-armed
+bandits,” in Proc. IEEE 51st IEEE Conf. Decis. Control (CDC) ,
+Dec. 2012, pp. 877–882.
+[170] K. Liu and Q. Zhao, “Indexability of restless bandit problems and
+optimality of whittle index for dynamic multichannel access,” IEEE
+Trans. Inf. Theory , vol. 56, no. 11, pp. 5547–5567, Nov. 2010.
+[171] R. R. Weber and G. Weiss, “On an index policy for restless bandits,”
+J. Appl. Probab. , vol. 27, no. 03, pp. 637–648, Sep. 1990.
+[172] J. Gittins, K. Glazebrook, and R. Weber, Multi-Armed Bandit Alloca-
+tion Indices , 2nd ed. Hoboken, NJ, USA: Wiley, Mar. 2011.
+[173] S. Boyd and L. V andenberghe, Convex Optimization. Cambridge, U.K.:
+Cambridge Univ. Press, 2004.
+[174] B. Korte and J. Vygen, Combinatorial Optimization: Theory and
+Algorithms, 4th ed. Berlin, Germany: Springer-V erlag, 2008.
+[175] D. Garber and E. Hazan, “A linearly convergent variant of the condi-
+tional gradient algorithm under strong convexity, with applications to
+online and stochastic optimization,” SIAM J. Optim. , vol. 26, no. 3,
+pp. 1493–1528, Jan. 2016.
+[176] B. Hajek and G. Sasaki, “Link scheduling in polynomial time,” IEEE
+Trans. Inf. Theory , vol. IT-34, no. 5, pp. 910–917, Sep. 1988.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 26 ---
+1208 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+[177] S. Farazi, A. G. Klein, and D. R. Brown, “On the average staleness
+of global channel state information in wireless networks with random
+transmit node selection,” in Proc. IEEE Int. Conf. Acoust., Speech
+Signal Process. (ICASSP) , Mar. 2016, pp. 3621–3625.
+[178] S. Farazi, A. G. Klein, and D. R. Brown, “Bounds on the age of
+information for global channel sta te dissemination in fully-connected
+networks,” in Proc. 26th Int. Conf. Comput. Commun. Netw. (ICCCN) ,
+Jul. 2017, pp. 1–7.
+[179] A. G. Klein, S. Farazi, W. He, and D. R. Brown, “Staleness bounds and
+efﬁcient protocols for disseminatio n of global channel state informa-
+tion,” IEEE Trans. Wireless Commun. , vol. 16, no. 9, pp. 5732–5746,
+Sep. 2017.
+[180] J. Selen, H. N. Y u, L. L. Andrew, and H. L. Vu, “The age of information
+in gossip networks,” in Analytical and Stochastic Modeling Techniques
+and Applications . Berlin, Germany: Springer, 2013, pp. 364–379.
+[181] S. Farazi, D. Richard Brown, an d A. G. Klein, “On global channel state
+estimation and dissemination in ring networks,” in Proc. 50th Asilomar
+Conf. Signals, Syst. Comput. , Nov. 2016, pp. 1122–1127.
+[182] R. D. Y ates, “Age of information in a network of preemptive servers,”
+in Proc. IEEE Conf. Comput. Commun. Workshops (INFOCOM
+WKSHPS), Apr. 2018, pp. 118–123.
+[183] S. Banik, S. K. Kaul, and P . B. Sujit, “Minimizing age in gateway
+based update systems,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) ,
+Jul. 2019, pp. 1032–1036.
+[184] S. Farazi, A. G. Klein, and D. R. Brown, “Fundamental bounds on the
+age of information in general multi-hop interference networks,” in Proc.
+IEEE Conf. Comput. Commun. Workshops (INFOCOM WKSHPS) ,
+Apr. 2019, pp. 96–101.
+[185] S. Farazi, A. G. Klein, and D. R. Brown, “Age of information with
+unreliable transmissions in multi-source multi-hop status update sys-
+tems,” in Proc. 53rd Asilomar Conf. Signals, Syst., Comput. , Nov. 2019,
+pp. 2017–2021.
+[186] S. Farazi, A. G. Klein, and D. R. Brown, “Average age of information
+in multi-source self-preemptive status update systems with packet
+delivery errors,” in Proc. 53rd Asilomar Conf. Signals, Syst., Comput. ,
+Nov. 2019, pp. 396–400.
+[187] T. Shreedhar, S. K. Kaul, and R. D. Y ates, “An age control transport
+protocol for delivering fresh upda tes in the Internet-of-Things,” in Proc.
+IEEE 20th Int. Symp. World Wireless, Mobile Multimedia Networks
+(WoWMoM), Jun. 2019, pp. 1–7.
+[188] O. Ayan, H. M. Gursu, A. Papa, an d W. Kellerer, “Probability analysis
+of age of information in multi-hop networks,” IEEE Netw. Lett.,v o l .2 ,
+no. 2, pp. 76–80, Jun. 2020.
+[189] M. Costa, S. V alentin, and A. Ephremides, “On the age of channel
+information for a ﬁnite-state Markov model,” in Proc. IEEE Int. Conf.
+Commun. (ICC) , Jun. 2015, pp. 4101–4106.
+[190] Y . Sang, B. Li, and B. Ji, “The power of waiting for more than one
+response in minimizing the age-of-information,” in Proc. IEEE Global
+Commun. Conf. (GLOBECOM) , Dec. 2017, pp. 1–6.
+[191] J. Zhong, R. Y ates, and E. Soljanin, “Minimizing content staleness
+in dynamo-style replicated storage systems,” in Proc. IEEE Infocom
+Age Inf. Workshop , Apr. 2018, pp. 361–366. [Online]. Available:
+https://arxiv.org/abs/1804.00742
+[192] J. Zhong, E. Soljanin, and R. D. Y ates, “Status updates through
+multicast networks,” in Proc. 55th Annu. Allerton Conf. Commun.,
+Control, Comput. (Allerton) , Oct. 2017, pp. 463–469.
+[193] J. Zhong, R. D. Y ates, and E. Soljani n, “Multicast with prioritized deliv-
+ery: How fresh is your data?” in Proc. IEEE 19th Int. Workshop Signal
+Process. Adv. Wireless Commun. (SPAWC) , Jun. 2018, pp. 476–480.
+[194] B. Buyukates, A. Soysal, and S. Ulukus, “Age of information in two-
+hop multicast networks,” in
+Proc. 52nd Asilomar Conf. Signals, Syst.,
+Comput., Oct. 2018, pp. 513–517.
+[195] B. Buyukates, A. Soysal, and S. Ulukus, “Age of information in mul-
+ticast networks with multiple update streams,” in Proc. 53rd Asilomar
+Conf. Signals, Syst., Comput. , Nov. 2019, pp. 1977–1981.
+[196] B. Buyukates, A. Soysal, and S. Ulukus, “Age of information in
+multihop multicast networks,” J. Commun. Netw. , vol. 21, no. 3,
+pp. 256–267, Jun. 2019.
+[197] J. Zhong and R. D. Y ates, “Timeliness in lossless block coding,” in
+Proc. Data Compress. Conf. (DCC) , Mar. 2016, pp. 339–348.
+[198] J. Zhong, R. D. Y ates, and E. Soljanin, “Backlog-adaptive compression:
+Age of information,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) ,
+Jun. 2017, pp. 566–570.
+[199] P . Mayekar, P . Parag, and H. Tya gi, “Optimal lossless source codes for
+timely updates,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2018,
+pp. 1246–1250.
+[200] M. Bastopcu, B. Buyukates, and S . Ulukus, “Optimal selective encod-
+ing for timely updates,” in Proc. 54th Annu. Conf. Inf. Sci. Syst. (CISS) ,
+Mar. 2020, pp. 1–6.
+[201] B. Buyukates, M. Bastopcu, and S . Ulukus, “Optimal selective encod-
+ing for timely updates with empty symbol,” in Proc. IEEE Int. Symp.
+Inf. Theory (ISIT) , Jun. 2020, pp. 1794–1799.
+[202] M. Bastopcu, B. Buyukates, an d S. Ulukus, “Selective encod-
+ing policies for maximizing information freshness,” Apr. 2020,
+arXiv:2004.06091. [Online]. Available: http://arxiv.org/abs/2004.06091
+[203] M. Bastopcu and S. Ulukus, “Partia l updates: Losing information for
+freshness,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2020,
+pp. 1800–1805.
+[204] S. Bhambay, S. Poojary, and P . Par ag, “Differential encoding for real-
+time status updates,” in Proc. IEEE Wireless Commun. Netw. Conf.
+(WCNC), Mar. 2017, pp. 1–6.
+[205] Q. He, G. Dan, and V . Fodor, “Mini mizing age of correlated infor-
+mation for wireless camera networks,” in Proc. IEEE Conf. Comput.
+Commun. Workshops (INFOCOM WKSHPS) , Apr. 2018, pp. 547–552.
+[206] J. Hribar, M. Costa, N. Kamin ski, and L. A. DaSilva, “Updating
+strategies in the Internet of Thi ngs by taking advantage of corre-
+lated sources,” in Proc. IEEE Global Commun. Conf. (GLOBECOM) ,
+Dec. 2017, pp. 1–6.
+[207] R. D. Y ates, M. Tavan, Y . Hu, and D. Raychaudhuri, “Timely
+cloud gaming,” in Proc. IEEE Conf. Comput. Commun. (INFOCOM) ,
+May 2017, pp. 1–9.
+[208] S. F. Lindstrom, M. Wetterberg, and N. Carlsson, “Cloud gaming:
+A QoE study of fast-paced single-player and multiplayer gaming,”
+in Proc. IEEE/ACM 13th Int. Conf. U tility Cloud Comput. (UCC) ,
+Dec. 2020, pp. 34–45.
+[209] M. Bastopcu and S. Ulukus, “Age of information for updates with
+distortion,” in Proc. IEEE Inf. Theory W orkshop (ITW) , Aug. 2019,
+pp. 1–5.
+[210] M. Bastopcu and S. Ulukus, “Age o f information for updates with dis-
+tortion: Constant and age-depende nt distortion constraints,” Dec. 2020,
+arXiv:1912.13493. [Online]. Available: http://arxiv.org/abs/1912.13493
+[211] B. Buyukates and S. Ulukus, “Time ly distributed computation with
+stragglers,” IEEE Trans. Commun. , vol. 68, no. 9, pp. 5273–5282,
+Sep. 2020.
+[212] G. D. Nguyen, S. Kompella, C. Kam, J. E. Wieselthier, and
+A. Ephremides, “Impact of hostile interference on information fresh-
+ness: A game approach,” in Proc. 15th Int. Symp. Model. Optim.
+Mobile, Ad Hoc, Wireless Netw. (WiOpt) , May 2017, pp. 1–7.
+[213] Y . Xiao and Y . Sun, “A dynamic jamming game for real-time status
+updates,” in Proc. IEEE Conf. Comput. Commun. Workshops (INFO-
+COM WKSHPS) , Apr. 2018, pp. 354–360.
+[214] A. Garnaev, W. Zhang, J. Zhong, and R. D. Y ates, “Maintaining
+information freshness under jamming,” in Proc. IEEE Conf. Comput.
+Commun. Workshops (INFOCOM WKSHPS) , Apr. 2019, pp. 90–95.
+[215] X. Gao, E. Akyol, and T. Basar, “On communication scheduling and
+remote estimation in the presence of an adversary as a nonzero-
+sum game,” in Proc. IEEE Conf. Decis. Control (CDC) , Dec. 2018,
+pp. 2710–2715.
+[216] G. D. Nguyen, S. Kompella, C. Kam, J. E. Wieselthier, and
+A. Ephremides, “Information fres hness over an interference channel:
+A game theoretic view,” in Proc. IEEE Conf. Comput. Commun.
+(INFOCOM), Apr. 2018, pp. 908–916.
+[217] S. Gopal and S. K. Kaul, “A gam e theoretic approach to DSRC and
+WiFi coexistence,” in Proc. IEEE Conf. Comput. Commun. Workshops
+(INFOCOM WKSHPS) , Apr. 2018, pp. 565–570.
+[218] S. Gopal, S. K. Kaul, and R. Chat urvedi, “Coexistence of age and
+throughput optimizing networks: A g ame theoretic approach,” in Proc.
+IEEE 30th PIMRC , Sep. 2019, pp. 1–6.
+[219] S. Gopal, S. K. Kaul, R. Chaturv edi, and S. Roy, “Coexistence of age
+and throughput optimizing networks: A spectrum sharing game,” 2019,
+arXiv:1909.02863. [Online]. Available: http://arxiv.org/abs/1909.02863
+[220] S. Gopal, S. K. Kaul, R. Chaturv edi, and S. Roy, “A non-cooperative
+multiple access game for timely updates,” in Proc. IEEE Conf. Comput.
+Commun. Workshops (INFOCOM WKSHPS) , Jul. 2020, pp. 924–929.
+[221] K. Saurav and R. V aze, “Game of ages,” in Proc. IEEE Conf.
+Comput. Commun. Workshops (INFOCOM WKSHPS) , Jul. 2020,
+pp. 942–947.
+[222] H. Zheng, K. Xiong, P . Fan, Z. Zhong, and K. Ben Letaief, “Age-based
+utility maximization for wireless powered networks: A stackelberg
+game approach,” in Proc. IEEE Global Commun. Conf. (GLOBECOM) ,
+Dec. 2019, pp. 1–6.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 27 ---
+Y A TESet al. : AGE OF INFORMA TION: AN INTRODUCTION AND SURVEY 1209
+[223] Z. Ning et al. , “Mobile edge computing enabled 5G health moni-
+toring for Internet of medical things: A decentralized game theoretic
+approach,” IEEE J. Sel. Areas Commun. , vol. 39, no. 2, pp. 463–478,
+Feb. 2020.
+[224] M. Bastopcu and S. Ulukus, “Wh o should Google scholar update more
+often?” in Proc. IEEE Conf. Comput. Commun. Workshops (INFOCOM
+WKSHPS), Jul. 2020, pp. 696–701.
+[225] E. T. Ceran, D. Gündüz, and A. Gyorgy, “A reinforcement learning
+approach to age of information in multi-user networks,” in Proc. IEEE
+29th Annu. Int. Symp. Pers., Indoor Mobile Radio Commun. (PIMRC) ,
+Sep. 2018, pp. 1967–1971.
+[226] B. Yin, S. Zhang, and Y . Cheng, “A pplication-oriented scheduling for
+optimizing the age of correlated information: A deep-reinforcement-
+learning-based approach,” IEEE Internet Things J. , vol. 7, no. 9,
+pp. 8748–8759, Sep. 2020.
+[227] A. Elgabli, H. Khan, M. Krouka, and M. Bennis, “Reinforcement
+learning based scheduling algorithm for optimizing age of information
+in ultra reliable low latency networks,” in Proc. IEEE Symp. Comput.
+Commun. (ISCC) , Jun. 2019, pp. 1–6.
+[228] H. B. Beytur and E. Uysal, “Age minimization of multiple ﬂows using
+reinforcement learning,” in Proc. Int. Conf. Comput., Netw. Commun.
+(ICNC), Feb. 2019, pp. 339–343.
+[229] S. F. Abedin, M. S. Munir, N. H. Tran, Z. Han, and C. S. Hong, “Data
+freshness and energy-efﬁcient UA V navigation optimization: A deep
+reinforcement learning approach,” 2020, arXiv:2003.04816. [Online].
+Available: http://arxiv.org/abs/2003.04816
+[230] M. Yi, X. Wang, J. Liu, Y . Zhang, and B. Bai, “Deep reinforcement
+learning for fresh data collection in UA V -assisted IoT networks,” 2020,
+arXiv:2003.00391. [Online]. Available: http://arxiv.org/abs/2003.00391
+[231] M. A. Abd-Elmagid, A. Ferdowsi, H. S. Dhillon, and W. Saad,
+“Deep reinforcement learning for minimizing Age-of-Information in
+UA V -assisted networks,” 2019,arXiv:1905.02993. [Online]. Available:
+http://arxiv.org/abs/1905.02993
+[232] E. Ozfatura, B. Buyukates, D. Gunduz, and S. Ulukus, “Age-based
+coded computation for bias reduction in distributed learning,” in Proc.
+IEEE Globecom , Dec. 2020, pp. 1–6.
+[233] R. S. Sutton and A. G. Barto, Reinforcement Learning: An Introduction.
+Cambridge, MA, USA: MIT Press, 2018.
+[234] R. S. Sutton, D. Precup, and S. Singh, “Between MDPs and semi-
+MDPs: A framework for temporal abstraction in reinforcement learn-
+ing,” Artif. Intell. , vol. 112, nos. 1–2, pp. 181–211, Aug. 1999.
+[235] W. Gao, G. Cao, M. Srivatsa, and A. Iyengar, “Distributed maintenance
+of cache freshness in opportunistic mobile networks,” in Proc. IEEE
+32nd Int. Conf. Distrib. Comput. Syst. , Jun. 2012, pp. 132–141.
+[236] R. D. Y ates, P . Ciblat, A. Y ener, and M. Wigger, “Age-optimal
+constrained cache updating,” in Proc. IEEE Int. Symp. Inf. Theory
+(ISIT), Jun. 2017, pp. 141–145.
+[237] C. Kam, S. Kompella, G. D. Nguyen, J. E. Wieselthier, and
+A. Ephremides, “Information freshness and popularity in mobile
+caching,” in Proc. IEEE Int. Symp. Inf. Theory (ISIT) , Jun. 2017,
+pp. 136–140.
+[238] H. Tang, P . Ciblat, J. Wang, M. Wigger, and R. Y ates, “Age
+of information aware cache updating with ﬁle- and age-dependent
+update durations,” 2019, arXiv:1909.05930. [Online]. Available:
+http://arxiv.org/abs/1909.05930
+[239] S. Zhang, J. Li, H. Luo, J. Gao, L. Zhao, and X. S. Shen, “Towards
+fresh and low-latency content delivery in vehicular networks: An edge
+caching aspect,” in Proc. 10th Int. Conf. Wireless Commun. Signal
+Process. (WCSP) , Oct. 2018, pp. 1–6.
+[240] L. Y ang, Y . Zhong, F.-C. Zheng, and S. Jin, “Edge caching with
+real-time guarantees,” 2019, arXiv:1912.11847. [Online]. Available:
+http://arxiv.org/abs/1912.11847
+[241] M. Bastopcu and S. Ulukus, “Information freshness in cache updat-
+ing systems,” Apr. 2020, arXiv:2004.09475
+. [Online]. Available:
+http://arxiv.org/abs/2004.09475
+[242] M. Bastopcu and S. Ulukus, “Maxi mizing information freshness in
+caching systems with limited cache storage capacity,” in Proc. Asilomar
+Conf., Nov. 2020.
+[243] S. Zhang, L. Wang, H. Luo, X. Ma, and S. Zhou, “AoI-delay tradeoff
+in mobile edge caching with freshness-aware content refreshing,” 2020,
+arXiv:2002.05868. [Online]. Available: http://arxiv.org/abs/2002.05868
+[244] A. Aral, M. Erol-Kantarci, and I. Brandi´ c, “Staleness control for edge
+data analytics,” Proc. ACM Meas. Anal. Comput. Syst. , vol. 4, no. 2,
+pp. 1–24, Jun. 2020.
+[245] C. Sonmez, S. Baghaee, A. Ergisi, and E. Uysal-Biyikoglu, “Age-of-
+information in practice: Status age measured over TCP/IP connections
+through WiFi, Ethernet and LTE,” in Proc. IEEE Int. Black Sea Conf.
+Commun. Netw. (BlackSeaCom) , Jun. 2018, pp. 1–5.
+[246] H. B. Beytur, S. Baghaee, and E. Uysal, “Measuring age of information
+on real-life connections,” in Proc. 27th Signal Process. Commun. Appl.
+Conf. (SIU) , Apr. 2019, pp. 1–4.
+[247] H. B. Beytur, S. Baghaee, and E. Uysal, “Towards AoI-aware smart
+IoT systems,” in Proc. Int. Conf. Comput., Netw. Commun. (ICNC) ,
+Feb. 2020, pp. 353–357.
+[248] T. Shreedhar, S. K. Kaul, and R. D. Y ates, “ACP: Age control protocol
+for minimizing age of information over the Internet,” in Proc. 24th
+Annu. Int. Conf. Mobile Comput. Netw. (MobiCom) , 2018, p. 699.
+[249] T. Shreedhar, S. K. Kaul , and R. D. Y ates, “ACP: An end-
+to-end transport protocol for delivering fresh updates in the
+Internet-of-Things,” 2018, arXiv:1811.03353. [Online]. Available:
+http://arxiv.org/abs/1811.03353
+Roy D. Yates (Fellow, IEEE) r eceived the B.S.E.
+degree from Princeton in 1983 and the S.M. and
+Ph.D. degrees from MIT in 1986 and 1990, respec-
+tively, all in electrical engineering. He is currently
+a Distinguished Professor with the Electrical and
+Computer Engineering (EC E) Department, Rutgers
+University, and the Wireless Information Network
+Laboratory, Rutgers University. He is the coauthor of
+the textbook, Probability and Stochastic Processes:
+A Friendly Introduction for Electrical and Com-
+puter Engineers published by John Wiley and Sons.
+He received the 2003 IEEE Marconi Prize Paper Award in Wireless Commu-
+nications, a Best Paper Award from t he ICC 2006 Wireless Communications
+Symposium, and the 2011 Rutgers University Teacher-Scholar Award. He was
+an Associate Editor of the IEEE T
+RANSACTIONS ON INFORMA TION THEORY
+from 2009 to 2012.
+Yin Sun (Senior Member, IEEE) received the B.Eng.
+and Ph.D. degrees in electronic engineering from
+Tsinghua University in 2006 and 2011, respectively.
+He was a Post-Doctoral Scholar and a Research
+Associate with Ohio State University from 2011 to
+2017. He is currently an Assistant Professor with the
+Department of Electrical and Computer Engineering,
+Auburn University, Auburn, AL, USA. His research
+interests include age of information, networking,
+information theory, and machine learning. He is
+also a member of ACM. He co-founded the Age of
+Information Workshop in 2018. His articles received the Best Student Paper
+Award from the I EEE/IFIP WiOp t 2013, the Best Paper Award from the
+IEEE/IFIP WiOpt 2019, and runner-up for the Best Paper Award of ACM
+MobiHoc 2020. He has coauthored a monograph, Age of Information: A New
+Metric for Information Freshness published by Morgan & Claypool Publishers
+in 2019.
+D. Richard Brown, III, received the B.S. and
+M.S. degrees from the University of Connecticut
+in 1992 and 1996, respectively, and the Ph.D. degree
+from Cornell University in 2000, all in electri-
+cal engineering. From 1992 to 1997, he was with
+General Electric Electrical Distribution and Con-
+trol. He joined the Worcester Polytechnic Institute
+in 2000 and has held appointments as a Visiting
+Associate Professor at Princeton University from
+2007 to 2008 and as a Program Director at the
+National Science Foundation in the Computing and
+Communication Foundations Division from 2016 to 2018. He is currently a
+Professor with the ECE Department, Worcester Polytechnic Institute.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 
+
+--- PDF page 28 ---
+1210 IEEE JOURNAL ON S ELECTED AREAS IN COMMUNICA TI ONS, VOL. 39, NO. 5, MA Y 2021
+Sanjit K. Kaul received the B.Tech. degree in elec-
+tronics and communications engineering from the
+Birla Institute of Technology, Mesra, India, in 2000,
+and the Ph.D. degree in electrical and computer engi-
+neering from Rutgers University in 2011. He worked
+in the telecommunications industry for four years
+after completing his bachelor’s degree. He was a
+Research Assistant with the Wireless Information
+Networks Laboratory from 2005 to 2011. He works
+on problems in wireless systems research. He is
+currently an Associate Professor with the Electronics
+and Communications Department, IIIT-Delhi. His current research inter-
+ests include age-of-information, networking for cyber-physical systems, and
+autonomous vehicles.
+Eytan Modiano (Fellow, IEEE) r eceived the B.S.
+degree in electrical engineering and computer sci-
+ence from the University of Connecticut at Storrs
+in 1986 and the M.S. and Ph.D. degrees in elec-
+trical engineering from the University of Mary-
+land, College Park, MD, USA, in 1989 and 1992,
+respectively. He is currently a Professor with the
+Department of Aeronautics and Astronautics and the
+Interim Director of the Laboratory for Information
+and Decision Systems (LIDS), MIT. Prior to joining
+the Faculty Member at MIT in 1999, he was a Naval
+Research Laboratory Fellow from 1987 to 1992, a National Research Council
+Post-Doctoral Fellow from 1992 to 1993, and a Member of the Technical
+Staff with the MIT Lincoln Laboratory from 1993 to 1999. His research
+interests include modeling, analysis , and design of communication networks
+and protocols. He is also an Associate Fellow of AIAA. He had served
+on the IEEE Fellow Committee in 2014 and 2015. He received the Infocom
+Achievement Award in 2020 for contributions to the analysis and design of
+cross-layer resource allocation algorithms for wireless, optical, and satellite
+networks. He was a co-recipient of the Infocom 2018 Best Paper Award,
+the MobiHoc 2018 Best Paper Award, t he MobiHoc 2016 Best Paper Award,
+the Wiopt 2013 Best Paper Award, and the Sigmetrics 2006 Best Paper
+Award. He was the Technical Program Co-Chair of IEEE Wiopt 2006, IEEE
+Infocom 2007, ACM MobiHoc 2007, and DRCN 2015. He was the Editor-
+in-Chief of the IEEE/ACM T
+RANSACTIONS ON NETWORKING from 2017 to
+2020. He has served as an Associate Editor for the IEEE T RANSACTIONS
+ON INFORMA TION THEORY and the IEEE/ACM T RANSACTIONS ON NET-
+WORKING .
+Sennur Ulukus (Fellow, IEEE) r eceived the B.S.
+and M.S. degrees in electrical and electronics engi-
+neering from Bilkent University and the Ph.D.
+degree in electrical and computer engineering from
+Wireless Information Network Laboratory (WIN-
+LAB), Rutgers University. She is currently the
+Anthony Ephremides Professor of Information Sci-
+ences and Systems with the Department of Electrical
+and Computer Engineering, University of Maryland,
+College Park, where she also holds a joint appoint-
+ment with the Institute for Systems Research (ISR).
+Prior to joining UMD, she was a Senior Technical Staff Member with A T&T
+Labs-Research. Her research interests include information theory, wireless
+communications, machine learning, signal processing and networks, with
+recent focus on private information retrieval, age of information, distributed
+coded computation, energy harvesting c ommunications, physical layer secu-
+rity, and wireless energy and informatio n transfer. She is also a Distinguished
+Scholar-Teacher of the University of Maryland. She received the 2003 IEEE
+Marconi Prize Paper Award in Wireless Communications, the 2019 IEEE
+Communications Society Best Tutorial Paper Award, a 2005 NSF CAREER
+Award, the 2010–2011 ISR Outstanding Systems Engineering Faculty Award,
+and the 2012 ECE George Corcoran Outstanding Teaching Award. She was
+a Distinguished Lecturer of the IEEE Information Theory Society for 2018–
+2019.
+Authorized licensed use limited to: University of Maryland College Park. Downloaded on April 17,2021 at 23:08:46 UTC from IEEE Xplore.  Restrictions apply. 

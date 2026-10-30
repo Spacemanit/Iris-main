@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature Review Lite"
+  short_description: "Find papers, compare evidence, and draft a focused review"
+  default_prompt: "Use $literature-review-lite to write a focused literature review with an evidence table and traceable citations."
